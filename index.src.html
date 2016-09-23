@@ -50,11 +50,11 @@ the XSS protections this document offers. The header's value is represented by t
 
 <div class="example">
   <pre>
-    <a>Artur</a>: { "nonce": "abcdefg", "report": "group1" }
+    <a http-header>Artur</a>: { "nonce": "abcdefg", "report": "group1" }
   </pre>
 </div>
 
-A server MAY send different `Artur` header field values with different <a>representations</a> of the
+A server MAY send different `Artur` header field values with different representations of the
 same resource.
 
 The header’s value is interpreted as an array of JSON objects, as described in Section 4 of [[!HTTP-JFV]].
@@ -65,29 +65,28 @@ Algorithms {#algorithms}
 When executing [[csp3#set-response-csp-list]], run the following steps before the current step 4:
 
 4.  Let |list| be the result of executing the algorithm defined in Section 4 of [[HTTP-JFV]] on the
-    value of |response|'s <a>`Artur`</a> header.
+    value of |response|'s <a http-header>`Artur`</a> header.
     
     If that algorithm does not result in error, then, for each |item| in |list|:
 
-    1.  If |item| does not have a `nonce` member, skip the remaining substeps, and move to the
+    1.  If |item| does not have a `nonce` member, or |item|'s `nonce` member's value does not match
+        the <a grammar>nonce-source</a> grammar, skip the remaining substeps, and move to the
         next |item|.
 
-    2.  Let |policy| be the string "`script-src 'strict-dynamic' 'nonce-`".
+    2.  Let |policy| be a new <a for="/">policy</a> with an empty <a>directive set</a>, and a
+        disposition of "`enforce`".
 
-    3.  Append the value of |item|'s `nonce` member's value to |policy|.
+    3.  Add a <a>directive</a> to |policy| whose <a for="directive">name</a> is "`script-src`",
+        and whose <a for="directive">value</a> is the value of |item|'s `nonce` member.
 
-    4.  Append "`'`" to |policy|.
+    4.  If |item| has a `report` member whose value matches the `token` grammar [[RFC7230]]:
 
-    5.  If |item| has a `report` member:
+        1.  Add a <a>directive</a> to |policy| whose <a for="directive">name</a> is "`report-to`",
+            and whose <a for="directive">value</a> is the value of |item|'s `report` member.
 
-        1.  Append "` report-to `" to |policy|.
+    5.  Append |policy| to |policies|.
 
-        2.  Append |item|'s `report` member's value to |policy|.
-
-    6.  Append the result of [[csp3#parse-serialized-policy-list]] on |policy| and "`enforce`" to
-        |policies|.
-
-Acknowledgements
+Acknowledgements {#acks}
 ================
 
 We like Artur.
