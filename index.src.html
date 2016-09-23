@@ -70,14 +70,15 @@ When executing [[csp3#set-response-csp-list]], run the following steps before th
     If that algorithm does not result in error, then, for each |item| in |list|:
 
     1.  If |item| does not have a `nonce` member, or |item|'s `nonce` member's value does not match
-        the <a grammar>nonce-source</a> grammar, skip the remaining substeps, and move to the
+        the <a grammar>base64-value</a> grammar, skip the remaining substeps, and move to the
         next |item|.
 
     2.  Let |policy| be a new <a for="/">policy</a> with an empty <a>directive set</a>, and a
         disposition of "`enforce`".
 
     3.  Add a <a>directive</a> to |policy| whose <a for="directive">name</a> is "`script-src`",
-        and whose <a for="directive">value</a> is the value of |item|'s `nonce` member.
+        and whose <a for="directive">value</a> is the result of replacing "`%s`" in the string
+        "'nonce-%s' 'strict-dynamic'" with the value of |item|'s `nonce` member.
 
     4.  If |item| has a `report` member whose value matches the `token` grammar [[RFC7230]]:
 

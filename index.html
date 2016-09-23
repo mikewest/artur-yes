@@ -1447,14 +1447,15 @@ same resource.</p>
      <ol>
       <li data-md="">
        <p>If <var>item</var> does not have a <code>nonce</code> member, or <var>item</var>’s <code>nonce</code> member’s value does not match
-  the <a data-link-type="grammar" href="https://w3c.github.io/webappsec-csp/#grammardef-nonce-source">nonce-source</a> grammar, skip the remaining substeps, and move to the
+  the <a data-link-type="grammar" href="https://w3c.github.io/webappsec-csp/#grammardef-base64-value">base64-value</a> grammar, skip the remaining substeps, and move to the
   next <var>item</var>.</p>
       <li data-md="">
        <p>Let <var>policy</var> be a new <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#policy">policy</a> with an empty <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#policy-directive-set">directive set</a>, and a
   disposition of "<code>enforce</code>".</p>
       <li data-md="">
        <p>Add a <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directives">directive</a> to <var>policy</var> whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-name">name</a> is "<code>script-src</code>",
-  and whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-value">value</a> is the value of <var>item</var>’s <code>nonce</code> member.</p>
+  and whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-value">value</a> is the result of replacing "<code>%s</code>" in the string
+  "'nonce-%s' 'strict-dynamic'" with the value of <var>item</var>’s <code>nonce</code> member.</p>
       <li data-md="">
        <p>If <var>item</var> has a <code>report</code> member whose value matches the <code>token</code> grammar <a data-link-type="biblio" href="#biblio-rfc7230">[RFC7230]</a>:</p>
        <ol>
@@ -1625,10 +1626,10 @@ same resource.</p>
    <li>
     <a data-link-type="biblio">[CSP]</a> defines the following terms:
     <ul>
+     <li><a href="https://w3c.github.io/webappsec-csp/#grammardef-base64-value">base64-value</a>
      <li><a href="https://w3c.github.io/webappsec-csp/#policy-directive-set">directive set</a>
      <li><a href="https://w3c.github.io/webappsec-csp/#directives">directives</a>
      <li><a href="https://w3c.github.io/webappsec-csp/#directive-name">name</a>
-     <li><a href="https://w3c.github.io/webappsec-csp/#grammardef-nonce-source">nonce-source</a>
      <li><a href="https://w3c.github.io/webappsec-csp/#policy">policy</a>
      <li><a href="https://w3c.github.io/webappsec-csp/#directive-value">value</a>
     </ul>
