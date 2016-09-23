@@ -1,0 +1,92 @@
+<pre class="metadata">
+Title: "Artur: Yes"
+Status: DREAM
+Shortname: artur-yes
+Level: None
+Editor: Mike West
+Abstract: If Artur is yes, then nonce is go!
+Indent: 2
+Version History: https://github.com/mikewest/artur-yes/commits/master/index.src.html
+!Participate: <a href="https://github.com/mikewest/artur-yes/issues/new">File an issue</a> (<a href="https://github.com/mikewest/artur-yes/issues">open issues</a>)
+Markup Shorthands: css off, markdown on
+</pre>
+<pre class="biblio">
+{
+  "HTTP-JFV": {
+    "authors": [ "Julian Reschke" ],
+    "href": "https://greenbytes.de/tech/webdav/draft-reschke-http-jfv-02.html",
+    "title": "A JSON Encoding for HTTP Header Field Values"
+  },
+  "ORIGIN-POLICY": {
+    "authors": [ "Mike West" ],
+    "href": "https://mikewest.github.io/origin-policy/",
+    "title": "Origin Policy"
+  }
+}
+</pre>
+
+Introduction {#intro}
+============
+
+Content Security Policy [[CSP]] is difficult to use in some cases, as the syntax is complicated,
+the overriding rules are confused, and the feature itself serves several different purposes. This
+document proposes a subset of CSP focused strictly on XSS protection, inspired in large part by
+Artur, et al.'s work on `'strict-dynamic'`.
+
+Framework {#framework}
+=========
+
+The `Artur` HTTP Response Header {#header}
+--------------------------------
+
+The <dfn export http-header>`Artur`</dfn> HTTP response header field is the delivery mechanism for
+the XSS protections this document offers. The header's value is represented by the following ABNF
+[[!RFC5234]]:
+
+<pre>
+  Artur = json-field-value
+</pre>
+
+<div class="example">
+  <pre>
+    <a>Artur</a>: { "nonce": "abcdefg", "report": "group1" }
+  </pre>
+</div>
+
+A server MAY send different `Artur` header field values with different <a>representations</a> of the
+same resource.
+
+The header’s value is interpreted as an array of JSON objects, as described in Section 4 of [[!HTTP-JFV]].
+
+Algorithms {#algorithms}
+----------
+
+When executing [[csp3#set-response-csp-list]], run the following steps before the current step 4:
+
+4.  Let |list| be the result of executing the algorithm defined in Section 4 of [[HTTP-JFV]] on the
+    value of |response|'s <a>`Artur`</a> header.
+    
+    If that algorithm does not result in error, then, for each |item| in |list|:
+
+    1.  If |item| does not have a `nonce` member, skip the remaining substeps, and move to the
+        next |item|.
+
+    2.  Let |policy| be the string "`script-src 'strict-dynamic' 'nonce-`".
+
+    3.  Append the value of |item|'s `nonce` member's value to |policy|.
+
+    4.  Append "`'`" to |policy|.
+
+    5.  If |item| has a `report` member:
+
+        1.  Append "` report-to `" to |policy|.
+
+        2.  Append |item|'s `report` member's value to |policy|.
+
+    6.  Append the result of [[csp3#parse-serialized-policy-list]] on |policy| and "`enforce`" to
+        |policies|.
+
+Acknowledgements
+================
+
+We like Artur.
