@@ -1429,9 +1429,14 @@ verbose and complicated CSP, in a pithy and comprehensible package.</p>
 the XSS protections this document offers. The header’s value is represented by the following ABNF <a data-link-type="biblio" href="#biblio-rfc5234">[RFC5234]</a>:</p>
 <pre>Artur = json-field-value
 </pre>
-   <div class="example" id="example-5e60e789">
-    <a class="self-link" href="#example-5e60e789"></a> 
+   <div class="example" id="example-4cf6e635">
+    <a class="self-link" href="#example-4cf6e635"></a> 
 <pre><a data-link-type="http-header" href="#http-headerdef-artur" id="ref-for-http-headerdef-artur-1">Artur</a>: { "nonce": "abcdefg", "report": "group1" }
+</pre>
+    <p>This header will have the same effect as the <code>Content-Security-Policy</code> header:</p>
+<pre><a data-link-type="http-header">Content-Security-Policy</a>: script-src 'strict-dynamic' 'nonce-abcdegf';
+                         object-src 'none';
+                         report-to group1;
 </pre>
    </div>
    <p>A server MAY send different <code>Artur</code> header field values with different representations of the
@@ -1456,6 +1461,9 @@ same resource.</p>
        <p>Add a <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directives">directive</a> to <var>policy</var> whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-name">name</a> is "<code>script-src</code>",
   and whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-value">value</a> is the result of replacing "<code>%s</code>" in the string
   "'nonce-%s' 'strict-dynamic'" with the value of <var>item</var>’s <code>nonce</code> member.</p>
+      <li data-md="">
+       <p>Add a <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directives">directive</a> to <var>policy</var> whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-name">name</a> is "<code>object-src</code>",
+  and whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-value">value</a> is "<code>'none'</code>".</p>
       <li data-md="">
        <p>If <var>item</var> has a <code>report</code> member whose value matches the <code>token</code> grammar <a data-link-type="biblio" href="#biblio-rfc7230">[RFC7230]</a>:</p>
        <ol>

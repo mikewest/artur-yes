@@ -52,6 +52,14 @@ the XSS protections this document offers. The header's value is represented by t
   <pre>
     <a http-header>Artur</a>: { "nonce": "abcdefg", "report": "group1" }
   </pre>
+
+  This header will have the same effect as the `Content-Security-Policy` header:
+
+  <pre>
+    <a http-header>Content-Security-Policy</a>: script-src 'strict-dynamic' 'nonce-abcdegf';
+                             object-src 'none';
+                             report-to group1;
+  </pre>
 </div>
 
 A server MAY send different `Artur` header field values with different representations of the
@@ -80,12 +88,15 @@ When executing [[csp3#set-response-csp-list]], run the following steps before th
         and whose <a for="directive">value</a> is the result of replacing "`%s`" in the string
         "'nonce-%s' 'strict-dynamic'" with the value of |item|'s `nonce` member.
 
-    4.  If |item| has a `report` member whose value matches the `token` grammar [[RFC7230]]:
+    4.  Add a <a>directive</a> to |policy| whose <a for="directive">name</a> is "`object-src`",
+        and whose <a for="directive">value</a> is "`'none'`".
+
+    5.  If |item| has a `report` member whose value matches the `token` grammar [[RFC7230]]:
 
         1.  Add a <a>directive</a> to |policy| whose <a for="directive">name</a> is "`report-to`",
             and whose <a for="directive">value</a> is the value of |item|'s `report` member.
 
-    5.  Append |policy| to |policies|.
+    6.  Append |policy| to |policies|.
 
 Acknowledgements {#acks}
 ================
