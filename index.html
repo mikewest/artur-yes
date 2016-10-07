@@ -1525,8 +1525,8 @@ somewhat verbose and the behavior confusing due to backwards compatibility conce
    <p>This document proposes a policy language focused strictly on XSS protection, pulling in a subset
 of CSP’s functionality, along with existing functionality such as that supported by the <code>X-XSS-Protection</code> HTTP response header. The goal is to provide the same XSS mitigation guarantees
 as a verbose and complicated CSP, in a pithy and comprehensible package.</p>
-   <div class="example" id="example-bc4325b3">
-    <a class="self-link" href="#example-bc4325b3"></a> MegaCorp, Inc. wishes to defend against cross-site scripting. It can do so by generating a unique
+   <div class="example" id="example-a5e6c95d">
+    <a class="self-link" href="#example-a5e6c95d"></a> MegaCorp, Inc. wishes to defend against cross-site scripting. It can do so by generating a unique
   string for each page load, and including that string both in an <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-1"><code>XSS-Protection</code></a> header and in the <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> element’s <code><a data-link-type="element-sub" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-nonce">nonce</a></code> attribute, as follows: 
 <pre class="highlight"><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-2">XSS-Protection</a>: { <span class="s">"</span><a data-link-type="dfn" dictionary-member="" href="#xssprotectionpolicy-nonce" id="ref-for-xssprotectionpolicy-nonce-1"><span class="s">nonce</span></a><span class="s">"</span>: <span class="s">"</span><strong><span class="s">abcdefg</span></strong><span class="s">"</span> }
 </pre>
@@ -1536,8 +1536,9 @@ as a verbose and complicated CSP, in a pithy and comprehensible package.</p>
 <span class="c">&lt;!--</span><span class="c"> This script won’t (no nonce). </span><span class="c">--></span>
 <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"script.js"</span><span class="nt">></span><span class="nt">&lt;/script></span>
 </pre>
-    <p class="note" role="note">Note: This will also have the happy side-effect of enabling the user agent’s built-in XSS
-  protections in "blocking" mode rather than the user agent’s default "filtering" mode. Hooray!</p>
+    <p class="note" role="note">Note: This will also have the happy side-effect of disabling plugins and enabling the user agent’s
+  built-in XSS protections in "blocking" mode rather than the user agent’s default "filtering" mode
+  for the current page. Hooray!</p>
    </div>
    <h2 class="heading settled" data-level="2" id="framework"><span class="secno">2. </span><span class="content">Framework</span><a class="self-link" href="#framework"></a></h2>
    <p>This specification uses terminology from <a data-link-type="biblio" href="#biblio-rfc5234">[RFC5234]</a> and <a data-link-type="biblio" href="#biblio-http-jfv">[HTTP-JFV]</a> to define its syntax
@@ -1752,6 +1753,10 @@ enforce the <a data-link-type="dfn" href="#xss-protection-policy" id="ref-for-xs
        </ol>
       <li data-md="">
        <p>Add a new <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directives">directive</a> to <var>csp</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#policy-directive-set">directive set</a> whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-name">name</a> is "<code>script-src</code>", and whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-value">value</a> is <var>script-src</var>.</p>
+      <li data-md="">
+       <p>Add a new <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directives">directive</a> to <var>csp</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#policy-directive-set">directive set</a> whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-name">name</a> is "<code>object-src</code>", and whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-value">value</a> is
+  "<code>'none'</code>".</p>
+       <p class="issue" id="issue-e41c12fe"><a class="self-link" href="#issue-e41c12fe"></a> This probably needs to be somehow configurable.</p>
       <li data-md="">
        <p>If <var>policy</var> has a <a data-link-type="dfn" href="#xss-protection-policy-reporting-group" id="ref-for-xss-protection-policy-reporting-group-3">reporting group</a> (<var>group</var>) which is not
   an empty string, then add a <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directives">directive</a> to <var>csp</var> whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-name">name</a> is "<code>report-to</code>", and whose <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#directive-value">value</a> is <var>group</var>.</p>
@@ -2170,6 +2175,7 @@ honorably Socratic tradition.</p>
    <div class="issue"> Matching inline event handlers requires some changes to CSP. <a href="https://github.com/w3c/webappsec-csp/issues/13">&lt;https://github.com/w3c/webappsec-csp/issues/13></a><a href="#issue-fe5e2bd8"> ↵ </a></div>
    <div class="issue"> Matching external scripts requires solidifying CSP’s SRI integration. <a href="https://github.com/w3c/webappsec-csp/issues/78">&lt;https://github.com/w3c/webappsec-csp/issues/78></a><a href="#issue-86a63c82"> ↵ </a></div>
    <div class="issue"> Upstream this once we decide it’s sane.<a href="#issue-d16995e8"> ↵ </a></div>
+   <div class="issue"> This probably needs to be somehow configurable.<a href="#issue-e41c12fe"> ↵ </a></div>
    <div class="issue"> Upstream this once we decide it’s sane.<a href="#issue-d16995e80"> ↵ </a></div>
    <div class="issue"> Work in progress. This isn’t specified anywhere, so I’m eyeballing/simplifying Blink’s
 implementation. It might or might not match Edge.<a href="#issue-1a3df3b0"> ↵ </a></div>

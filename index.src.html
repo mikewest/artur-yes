@@ -115,8 +115,9 @@ as a verbose and complicated CSP, in a pithy and comprehensible package.
     &lt;script src="script.js"&gt;&lt;/script&gt;
   </pre>
 
-  Note: This will also have the happy side-effect of enabling the user agent's built-in XSS
-  protections in "blocking" mode rather than the user agent's default "filtering" mode. Hooray!
+  Note: This will also have the happy side-effect of disabling plugins and enabling the user agent's
+  built-in XSS protections in "blocking" mode rather than the user agent's default "filtering" mode
+  for the current page. Hooray!
 </div>
 
 Framework {#framework}
@@ -414,11 +415,17 @@ enforce the <a>XSS protection policy</a> it specifies.
         <a for="directive">name</a> is "`script-src`", and whose <a for="directive">value</a> is
         |script-src|.
 
-    8.  If |policy| has a <a for="XSS protection policy">reporting group</a> (|group|) which is not
+    8.  Add a new <a>directive</a> to |csp|'s <a for="policy">directive set</a> whose
+        <a for="directive">name</a> is "`object-src`", and whose <a for="directive">value</a> is
+        "`'none'`".
+
+        ISSUE: This probably needs to be somehow configurable.
+
+    9.  If |policy| has a <a for="XSS protection policy">reporting group</a> (|group|) which is not
         an empty string, then add a <a>directive</a> to |csp| whose <a for="directive">name</a>
         is "`report-to`", and whose <a for="directive">value</a> is |group|.
 
-    9.  Append |policy| to |response|'s <a for="response">CSP list</a>.
+    10. Append |policy| to |response|'s <a for="response">CSP list</a>.
 
 
 Integration with HTML {#monkey-patching-html}
