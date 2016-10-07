@@ -1651,6 +1651,8 @@ item in the sequence that does not match that grammer MUST be ignored.</p>
 &lt;a onclick="// Content which hashes to <code>zyx...</code> goes here.">Click!&lt;/a>
 </pre>
    </div>
+   <p class="issue" id="issue-fe5e2bd8"><a class="self-link" href="#issue-fe5e2bd8"></a> Matching inline event handlers requires some changes to CSP. <a href="https://github.com/w3c/webappsec-csp/issues/13">&lt;https://github.com/w3c/webappsec-csp/issues/13></a></p>
+   <p class="issue" id="issue-86a63c82"><a class="self-link" href="#issue-86a63c82"></a> Matching external scripts requires solidifying CSP’s SRI integration. <a href="https://github.com/w3c/webappsec-csp/issues/78">&lt;https://github.com/w3c/webappsec-csp/issues/78></a></p>
    <h3 class="heading settled" data-level="3.2" id="nonce-member"><span class="secno">3.2. </span><span class="content">The <code>nonce</code> member</span><a class="self-link" href="#nonce-member"></a></h3>
    <p>The <dfn class="dfn-paneled" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="xssprotectionpolicy-nonce"><code>nonce</code></dfn> member defines a cryptographic
 nonce ("number used once") which can be used to ensure that only <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> elements whose <code><a data-link-type="element-sub" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-nonce">nonce</a></code> attributes contain a specific value are allowed to execute script for a given page.</p>
@@ -2165,6 +2167,8 @@ honorably Socratic tradition.</p>
 </pre>
   <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
   <div style="counter-reset:issue">
+   <div class="issue"> Matching inline event handlers requires some changes to CSP. <a href="https://github.com/w3c/webappsec-csp/issues/13">&lt;https://github.com/w3c/webappsec-csp/issues/13></a><a href="#issue-fe5e2bd8"> ↵ </a></div>
+   <div class="issue"> Matching external scripts requires solidifying CSP’s SRI integration. <a href="https://github.com/w3c/webappsec-csp/issues/78">&lt;https://github.com/w3c/webappsec-csp/issues/78></a><a href="#issue-86a63c82"> ↵ </a></div>
    <div class="issue"> Upstream this once we decide it’s sane.<a href="#issue-d16995e8"> ↵ </a></div>
    <div class="issue"> Upstream this once we decide it’s sane.<a href="#issue-d16995e80"> ↵ </a></div>
    <div class="issue"> Work in progress. This isn’t specified anywhere, so I’m eyeballing/simplifying Blink’s
