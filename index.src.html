@@ -139,6 +139,9 @@ empty string unless otherwise specified.
 Each policy has a <dfn for="XSS protection policy">hash set</dfn> which is a set of strings. Its
 value is the empty set unless otherwise specified.
 
+Each policy has a <dfn for="XSS protection policy">reporting disposition</dfn> which is either
+"`enforce`" or "`report`". Its value is "`enforce`" unless otherwise specified.
+
 Each policy has a <dfn for="XSS protection policy">reporting group</dfn> which is a string. Its
 value is the string "`default`" unless otherwise specified.
 
@@ -252,6 +255,7 @@ boils down to a representation of the following dictionary type:
     DOMString nonce;
     ReflectedXSSPolicy reflection = "block";
     DOMString report = "default";
+    boolean reportOnly = false;
   };
 </pre>
 
@@ -392,6 +396,26 @@ Note: Reporting to the group named "`default`" is enabled unless otherwise speci
   </pre>
 </div>
 
+The `reportOnly` member {#reportOnly-member}
+-----------------------
+
+The <dfn dictionary-member for="XSSProtectionPolicy">`reportOnly`</dfn> member defines whether the
+policy specified will actually block script execution, or whether it will operate in "report-only"
+mode, sending violation reports up to a server-side collector while allowing script execution.
+
+<div class="example">
+  MegaCorp, Inc. wishes to receive violation reports when script execution would be blocked by the
+  XSS protection policy it specifies while it verifies that its nonce-generation code is working
+  correctly. It can do so by sending {{XSSProtectionPolicy/report}} and
+  {{XSSProtectionPolicy/reportOnly}} members along with the policy, and specifying a reporting
+  endpoint, as follows:
+
+  <pre>
+    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy" idl>nonce</a>": "abcdefg", "<a for="XSSProtectionPolicy" idl>report</a>": "group1", "<a for="XSSProtectionPolicy">reportOnly</a>": true }
+    <a http-header>Report-To</a>: { "<a spec="REPORTING">url</a>": "https://example.com/report", "<a spec="REPORTING">group</a>": "group1", "<a spec="REPORTING">max-age</a>": 10886400 }
+  </pre>
+</div>
+
 Integrations {#integrations}
 ============
 
@@ -429,12 +453,14 @@ enforce the <a>XSS protection policy</a> it specifies.
         grammar defined in [[RFC7230]].
 
     3.  Let |csp| be a new <a for="/" lt="policy">Content Security Policy</a> with an empty
-        <a for="policy">directive set</a>, and a <a for="policy">disposition</a> of "`enforce`".
+        <a for="policy">directive set</a>, and a <a for="policy">disposition</a> of "`enforce`" if
+        |policy|'s <a for="XSS protection policy">reporting disposition</a> is "`enforce`", and
+        "`report`" otherwise.
 
     4.  Let |script-src| be the string "`'strict-dynamic' `".
 
-    5.  If |policy| has a <a for="XSS protection policy">eval policy</a> (|eval|) of
-        "`unsafe-allow`", then append "`'unsafe-eval' `" to |script-src|.
+    5.  If |policy| has a <a for="XSS protection policy">eval policy</a> of "`unsafe-allow`", then
+        append "`'unsafe-eval' `" to |script-src|.
 
     6.  If |policy|'s <a for="XSS protection policy">nonce</a> is not an empty string, append to
         |script-src| the result of replacing "`%s`" in the string "`'nonce-%s'` " with |policy|'s
