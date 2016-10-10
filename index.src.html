@@ -234,7 +234,13 @@ boils down to a representation of the following dictionary type:
     "block"
   };
 
+  enum EvalPolicy {
+    "block",
+    "unsafe-allow"
+  };
+
   dictionary XSSProtectionPolicy {
+    EvalPolicy eval = "block";
     sequence&lt;DOMString&gt; hash;
     DOMString nonce;
     ReflectedXSSPolicy reflection = "block";
@@ -245,6 +251,24 @@ boils down to a representation of the following dictionary type:
 The following subsections define the behavior of each of the known members the header's value
 defines. Future versions of this document may define additional members; user agents MUST ignore
 unknown members when parsing the header.
+
+The `eval` member {#eval-member}
+-----------------
+
+The <dfn dictionary-member for="XSSProtectionPolicy">eval</dfn> member defines the page's policy
+towards `eval()`. By default, the value is "`block`", which causes `eval()` to throw a
+`SecurityError` rather than executing a string as code. It can be set to "`unsafe-allow`" in order
+to allow such conversion.
+
+<div class="example">
+  MegaCorp, Inc. has a number of libraries which require `eval()` for various purposes. They can
+  allow such execution by sending an appropriate {{XSSProtectionPolicy/eval}} member along with
+  their XSS protection policy:
+
+  <pre>
+    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>", "<a for="XSSProtectionPolicy">eval</a>": "unsafe-allow" ] }
+  </pre>
+</div>
 
 The `hash` member {#hash-member}
 -----------------

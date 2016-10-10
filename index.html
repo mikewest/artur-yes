@@ -1421,7 +1421,7 @@ pre.idl.highlight { color: #708090; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">XSS Protection</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas, <time class="dt-updated" datetime="2016-10-07">7 October 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas, <time class="dt-updated" datetime="2016-10-10">10 October 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>Version History:
@@ -1438,7 +1438,7 @@ pre.idl.highlight { color: #708090; }
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 7 October 2016,
+In addition, as of 10 October 2016,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1466,10 +1466,11 @@ Parts of this work may be from another specification document.  If so, those par
     <li>
      <a href="#header"><span class="secno">3</span> <span class="content">The <code>XSS-Protection</code> HTTP Response Header</span></a>
      <ol class="toc">
-      <li><a href="#hash-member"><span class="secno">3.1</span> <span class="content">The <code>hash</code> member</span></a>
-      <li><a href="#nonce-member"><span class="secno">3.2</span> <span class="content">The <code>nonce</code> member</span></a>
-      <li><a href="#reflection-member"><span class="secno">3.3</span> <span class="content">The <code>reflection</code> member</span></a>
-      <li><a href="#report-member"><span class="secno">3.4</span> <span class="content">The <code>report</code> member</span></a>
+      <li><a href="#eval-member"><span class="secno">3.1</span> <span class="content">The <code>eval</code> member</span></a>
+      <li><a href="#hash-member"><span class="secno">3.2</span> <span class="content">The <code>hash</code> member</span></a>
+      <li><a href="#nonce-member"><span class="secno">3.3</span> <span class="content">The <code>nonce</code> member</span></a>
+      <li><a href="#reflection-member"><span class="secno">3.4</span> <span class="content">The <code>reflection</code> member</span></a>
+      <li><a href="#report-member"><span class="secno">3.5</span> <span class="content">The <code>report</code> member</span></a>
      </ol>
     <li>
      <a href="#integrations"><span class="secno">4</span> <span class="content">Integrations</span></a>
@@ -1620,7 +1621,13 @@ boils down to a representation of the following dictionary type:</p>
   <dfn class="s dfn-paneled idl-code" data-dfn-for="ReflectedXSSPolicy" data-dfn-type="enum-value" data-export="" data-lt="&quot;block&quot;|block" id="dom-reflectedxsspolicy-block">"block"</dfn>
 };
 
+<span class="kt">enum</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="enum" data-export="" id="enumdef-evalpolicy">EvalPolicy</dfn> {
+  <dfn class="s idl-code" data-dfn-for="EvalPolicy" data-dfn-type="enum-value" data-export="" data-lt="&quot;block&quot;|block" id="dom-evalpolicy-block">"block"<a class="self-link" href="#dom-evalpolicy-block"></a></dfn>,
+  <dfn class="s idl-code" data-dfn-for="EvalPolicy" data-dfn-type="enum-value" data-export="" data-lt="&quot;unsafe-allow&quot;|unsafe-allow" id="dom-evalpolicy-unsafe-allow">"unsafe-allow"<a class="self-link" href="#dom-evalpolicy-unsafe-allow"></a></dfn>
+};
+
 <span class="kt">dictionary</span> <dfn class="nv idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-xssprotectionpolicy">XSSProtectionPolicy<a class="self-link" href="#dictdef-xssprotectionpolicy"></a></dfn> {
+  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy" id="ref-for-enumdef-evalpolicy-1">EvalPolicy</a> <dfn class="nv dfn-paneled idl-code" data-default="&quot;block&quot;" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="EvalPolicy " id="dom-xssprotectionpolicy-eval">eval</dfn> = "block";
   <span class="kt">sequence</span>&lt;<span class="kt">DOMString</span>> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="sequence<DOMString> " id="dom-xssprotectionpolicy-hash">hash</dfn>;
   <span class="kt">DOMString</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="DOMString " id="dom-xssprotectionpolicy-nonce">nonce</dfn>;
   <a class="n" data-link-type="idl-name" href="#enumdef-reflectedxsspolicy" id="ref-for-enumdef-reflectedxsspolicy-2">ReflectedXSSPolicy</a> <dfn class="nv dfn-paneled idl-code" data-default="&quot;block&quot;" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="ReflectedXSSPolicy " id="dom-xssprotectionpolicy-reflection">reflection</dfn> = "block";
@@ -1630,7 +1637,18 @@ boils down to a representation of the following dictionary type:</p>
    <p>The following subsections define the behavior of each of the known members the header’s value
 defines. Future versions of this document may define additional members; user agents MUST ignore
 unknown members when parsing the header.</p>
-   <h3 class="heading settled" data-level="3.1" id="hash-member"><span class="secno">3.1. </span><span class="content">The <code>hash</code> member</span><a class="self-link" href="#hash-member"></a></h3>
+   <h3 class="heading settled" data-level="3.1" id="eval-member"><span class="secno">3.1. </span><span class="content">The <code>eval</code> member</span><a class="self-link" href="#eval-member"></a></h3>
+   <p>The <dfn class="dfn-paneled" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="xssprotectionpolicy-eval">eval</dfn> member defines the page’s policy
+towards <code>eval()</code>. By default, the value is "<code>block</code>", which causes <code>eval()</code> to throw a <code>SecurityError</code> rather than executing a string as code. It can be set to "<code>unsafe-allow</code>" in order
+to allow such conversion.</p>
+   <div class="example" id="example-a10e66eb">
+    <a class="self-link" href="#example-a10e66eb"></a> MegaCorp, Inc. has a number of libraries which require <code>eval()</code> for various purposes. They can
+  allow such execution by sending an appropriate <code class="idl"><a data-link-type="idl" href="#dom-xssprotectionpolicy-eval" id="ref-for-dom-xssprotectionpolicy-eval-1">eval</a></code> member along with
+  their XSS protection policy: 
+<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-5">XSS-Protection</a>: { "<a data-link-type="dfn" href="#xssprotectionpolicy-hash" id="ref-for-xssprotectionpolicy-hash-1">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>", "<a data-link-type="dfn" href="#xssprotectionpolicy-eval" id="ref-for-xssprotectionpolicy-eval-1">eval</a>": "unsafe-allow" ] }
+</pre>
+   </div>
+   <h3 class="heading settled" data-level="3.2" id="hash-member"><span class="secno">3.2. </span><span class="content">The <code>hash</code> member</span><a class="self-link" href="#hash-member"></a></h3>
    <p>The <dfn class="dfn-paneled" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="xssprotectionpolicy-hash">hash</dfn> member defines a set of digests
 which specify specific script content which is allowed to execute on a given page.</p>
    <p>If present, the member’s value MUST be a sequence of <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>s, and each MUST adhere to the <a data-link-type="grammar" href="https://w3c.github.io/webappsec-csp/#grammardef-hash-source">hash-source</a> grammar specified in <a href="https://w3c.github.io/webappsec-csp/#framework-directive-source-list">Content Security Policy Level 3 §framework-directive-source-list</a>. Any
@@ -1638,9 +1656,9 @@ item in the sequence that does not match that grammer MUST be ignored.</p>
    <div class="example" id="example-f9e5c664">
     <a class="self-link" href="#example-f9e5c664"></a> MegaCorp, Inc. wishes to ensure that injected <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> elements do not execute. They can do so
   by executing a secure hash function (like those specified in <a data-link-type="biblio" href="#biblio-sha2">[SHA2]</a>) on each script they wish to
-  execute, and including the resulting list of digests in an <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-5"><code>XSS-Protection</code></a> header. These digests either match the inline content of a <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> element or event handler, or
+  execute, and including the resulting list of digests in an <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-6"><code>XSS-Protection</code></a> header. These digests either match the inline content of a <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> element or event handler, or
   match a <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> element’s <code><a data-link-type="element-sub" href="https://w3c.github.io/webappsec-subresource-integrity/#dom-htmlscriptelement-integrity">integrity</a></code> attribute: 
-<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-6">XSS-Protection</a>: { "<a data-link-type="dfn" href="#xssprotectionpolicy-hash" id="ref-for-xssprotectionpolicy-hash-1">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>" ] }
+<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-7">XSS-Protection</a>: { "<a data-link-type="dfn" href="#xssprotectionpolicy-hash" id="ref-for-xssprotectionpolicy-hash-2">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>" ] }
 
 ...
 
@@ -1654,22 +1672,22 @@ item in the sequence that does not match that grammer MUST be ignored.</p>
    </div>
    <p class="issue" id="issue-fe5e2bd8"><a class="self-link" href="#issue-fe5e2bd8"></a> Matching inline event handlers requires some changes to CSP. <a href="https://github.com/w3c/webappsec-csp/issues/13">&lt;https://github.com/w3c/webappsec-csp/issues/13></a></p>
    <p class="issue" id="issue-86a63c82"><a class="self-link" href="#issue-86a63c82"></a> Matching external scripts requires solidifying CSP’s SRI integration. <a href="https://github.com/w3c/webappsec-csp/issues/78">&lt;https://github.com/w3c/webappsec-csp/issues/78></a></p>
-   <h3 class="heading settled" data-level="3.2" id="nonce-member"><span class="secno">3.2. </span><span class="content">The <code>nonce</code> member</span><a class="self-link" href="#nonce-member"></a></h3>
+   <h3 class="heading settled" data-level="3.3" id="nonce-member"><span class="secno">3.3. </span><span class="content">The <code>nonce</code> member</span><a class="self-link" href="#nonce-member"></a></h3>
    <p>The <dfn class="dfn-paneled" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="xssprotectionpolicy-nonce"><code>nonce</code></dfn> member defines a cryptographic
 nonce ("number used once") which can be used to ensure that only <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> elements whose <code><a data-link-type="element-sub" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-nonce">nonce</a></code> attributes contain a specific value are allowed to execute script for a given page.</p>
    <p>If present, the member’s value MUST be a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>, and MUST adhere to the <a data-link-type="grammar" href="https://w3c.github.io/webappsec-csp/#grammardef-base64-value">base64-value</a> grammar specified in <a href="https://w3c.github.io/webappsec-csp/#framework-directive-source-list">Content Security Policy Level 3 §framework-directive-source-list</a>. If the
 member’s value does not match that grammar, the value MUST be ignored.</p>
    <div class="example" id="example-4de9c446">
     <a class="self-link" href="#example-4de9c446"></a> MegaCorp, Inc. wishes to ensure that injected <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> elements do not execute. They can do so
-  by generating a unique string for each page load, and including that string both in an <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-7"><code>XSS-Protection</code></a> header and in the <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> element’s <code><a data-link-type="element-sub" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-nonce">nonce</a></code> attribute, as follows: 
-<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-8">XSS-Protection</a>: { "<a data-link-type="dfn" dictionary-member="" href="#xssprotectionpolicy-nonce" id="ref-for-xssprotectionpolicy-nonce-2">nonce</a>": "<strong>abcdefg</strong>" }
+  by generating a unique string for each page load, and including that string both in an <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-8"><code>XSS-Protection</code></a> header and in the <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script">script</a></code> element’s <code><a data-link-type="element-sub" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-nonce">nonce</a></code> attribute, as follows: 
+<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-9">XSS-Protection</a>: { "<a data-link-type="dfn" dictionary-member="" href="#xssprotectionpolicy-nonce" id="ref-for-xssprotectionpolicy-nonce-2">nonce</a>": "<strong>abcdefg</strong>" }
 
 ...
 
 &lt;script src="script.js" nonce="<strong>abcdefg</strong>">&lt;/script>
 </pre>
    </div>
-   <h3 class="heading settled" data-level="3.3" id="reflection-member"><span class="secno">3.3. </span><span class="content">The <code>reflection</code> member</span><a class="self-link" href="#reflection-member"></a></h3>
+   <h3 class="heading settled" data-level="3.4" id="reflection-member"><span class="secno">3.4. </span><span class="content">The <code>reflection</code> member</span><a class="self-link" href="#reflection-member"></a></h3>
    <p>The <dfn data-dfn-for="XSSProtectionPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="xssprotectionpolicy-reflection"><code>reflection</code><a class="self-link" href="#xssprotectionpolicy-reflection"></a></dfn> member controls the behavior
 of any built-in mechanisms a user agent provides to actively defend against reflected cross-site
 scripting.</p>
@@ -1689,7 +1707,7 @@ scripting.</p>
     <dd data-md="">
      <p>Enables the user agent’s active defenses against XSS, blocking the page entirely if reflected
   script is detected. Generally speaking, this is safer than <code class="idl"><a data-link-type="idl" href="#dom-reflectedxsspolicy-filter" id="ref-for-dom-reflectedxsspolicy-filter-2">filter</a></code>, and
-  we use it as the fallback when an <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-9"><code>XSS-Protection</code></a> header is delivered
+  we use it as the fallback when an <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-10"><code>XSS-Protection</code></a> header is delivered
   without specifying a behavior.</p>
    </dl>
    <p>User agents MAY choose not to support this attribute if they do not implement such heuristics.</p>
@@ -1697,10 +1715,10 @@ scripting.</p>
     <a class="self-link" href="#example-0bede70d"></a> MegaCorp, Inc. wishes to ensure that the user agent’s built-in XSS protection mechanisms are
   active, but does not want the browser to simply filter out suspected reflections. They prefer to
   block the page load entirely. They can do so with the following header: 
-<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-10">XSS-Protection</a>: { "<a data-link-type="idl" href="#dom-xssprotectionpolicy-reflection" id="ref-for-dom-xssprotectionpolicy-reflection-2">reflection</a>": "<a data-link-type="idl" href="#dom-reflectedxsspolicy-block" id="ref-for-dom-reflectedxsspolicy-block-2">block</a>" }
+<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-11">XSS-Protection</a>: { "<a data-link-type="idl" href="#dom-xssprotectionpolicy-reflection" id="ref-for-dom-xssprotectionpolicy-reflection-2">reflection</a>": "<a data-link-type="idl" href="#dom-reflectedxsspolicy-block" id="ref-for-dom-reflectedxsspolicy-block-2">block</a>" }
 </pre>
    </div>
-   <h3 class="heading settled" data-level="3.4" id="report-member"><span class="secno">3.4. </span><span class="content">The <code>report</code> member</span><a class="self-link" href="#report-member"></a></h3>
+   <h3 class="heading settled" data-level="3.5" id="report-member"><span class="secno">3.5. </span><span class="content">The <code>report</code> member</span><a class="self-link" href="#report-member"></a></h3>
    <p>The <dfn data-dfn-for="XSSProtectionPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="xssprotectionpolicy-report"><code>report</code><a class="self-link" href="#xssprotectionpolicy-report"></a></dfn> member defines the reporting
 group to which violation reports will be sent <a data-link-type="biblio" href="#biblio-reporting">[REPORTING]</a>.</p>
    <p>The member’s value MUST be a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a></code>. If an empty string is provided, reporting will be
@@ -1710,12 +1728,12 @@ disabled.</p>
     <a class="self-link" href="#example-1a2b184b"></a> MegaCorp, Inc. wishes to receive violation reports when script execution is blocked by the XSS
   protection policy it specifies. It can do so by sending a <code class="idl"><a data-link-type="idl" href="#dom-xssprotectionpolicy-report" id="ref-for-dom-xssprotectionpolicy-report-2">report</a></code> member
   along with the policy, and specifying a reporting endpoint, as follows: 
-<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-11">XSS-Protection</a>: { "<a data-link-type="idl" href="#dom-xssprotectionpolicy-nonce" id="ref-for-dom-xssprotectionpolicy-nonce-2">nonce</a>": "abcdefg", "<a data-link-type="idl" href="#dom-xssprotectionpolicy-report" id="ref-for-dom-xssprotectionpolicy-report-3">report</a>": "group1" }
+<pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-12">XSS-Protection</a>: { "<a data-link-type="idl" href="#dom-xssprotectionpolicy-nonce" id="ref-for-dom-xssprotectionpolicy-nonce-2">nonce</a>": "abcdefg", "<a data-link-type="idl" href="#dom-xssprotectionpolicy-report" id="ref-for-dom-xssprotectionpolicy-report-3">report</a>": "group1" }
 <a data-link-type="http-header" href="https://wicg.github.io/reporting/#report-to">Report-To</a>: { "<a data-link-type="dfn">url</a>": "https://example.com/report", "<a data-link-type="dfn">group</a>": "group1", "<a data-link-type="dfn">max-age</a>": 10886400 }
 </pre>
    </div>
    <h2 class="heading settled" data-level="4" id="integrations"><span class="secno">4. </span><span class="content">Integrations</span><a class="self-link" href="#integrations"></a></h2>
-   <p>The <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-12"><code>XSS-Protection</code></a> header is little more than syntactic sugar on top of
+   <p>The <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-13"><code>XSS-Protection</code></a> header is little more than syntactic sugar on top of
 existing processing algorithms for <a data-link-type="biblio" href="#biblio-csp">[CSP]</a> and <code>X-XSS-Protection</code>. This section explains the ways
 in which the <a data-link-type="dfn" href="#xss-protection-policy" id="ref-for-xss-protection-policy-3">XSS protection policy</a> is enforced for a given context:</p>
    <h3 class="heading settled" data-level="4.1" id="monkey-patching-fetch"><span class="secno">4.1. </span><span class="content">Integration with Fetch</span><a class="self-link" href="#monkey-patching-fetch"></a></h3>
@@ -1773,7 +1791,7 @@ enforce the <a data-link-type="dfn" href="#xss-protection-policy" id="ref-for-xs
    </ol>
    <p class="issue" id="issue-d16995e80"><a class="self-link" href="#issue-d16995e80"></a> Upstream this once we decide it’s sane.</p>
    <h4 class="heading settled algorithm" data-algorithm="Initialize a Document&apos;s reflected XSS policy." data-level="4.2.1" id="initialize-document-xss"><span class="secno">4.2.1. </span><span class="content"> Initialize a <code>Document</code>'s reflected XSS policy. </span><a class="self-link" href="#initialize-document-xss"></a></h4>
-   <p>Given a <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document">Document</a></code> (<var>document</var>), and a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response">response</a> (<var>response</var>), this algorithm sets <var>document</var>’s <a data-link-type="dfn" href="#document-reflected-xss-policy" id="ref-for-document-reflected-xss-policy-1">reflected XSS policy</a> based on <var>response</var>’s <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-13"><code>XSS-Protection</code></a> and <code>X-XSS-Protection</code> headers.</p>
+   <p>Given a <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document">Document</a></code> (<var>document</var>), and a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response">response</a> (<var>response</var>), this algorithm sets <var>document</var>’s <a data-link-type="dfn" href="#document-reflected-xss-policy" id="ref-for-document-reflected-xss-policy-1">reflected XSS policy</a> based on <var>response</var>’s <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-14"><code>XSS-Protection</code></a> and <code>X-XSS-Protection</code> headers.</p>
    <ol>
     <li data-md="">
      <p>Let <var>list</var> be an empty sequence.</p>
@@ -1843,7 +1861,7 @@ enforce the <a data-link-type="dfn" href="#xss-protection-policy" id="ref-for-xs
 implementation. It might or might not match Edge.</p>
    <h2 class="heading settled" data-level="5" id="implementation"><span class="secno">5. </span><span class="content">Implementation Considerations</span><a class="self-link" href="#implementation"></a></h2>
    <h3 class="heading settled" data-level="5.1" id="error-messages"><span class="secno">5.1. </span><span class="content">Error Messages</span><a class="self-link" href="#error-messages"></a></h3>
-   <p>The <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-14"><code>XSS-Protection</code></a> mechanism is defined almost entirely in terms of <a data-link-type="biblio" href="#biblio-csp">[CSP]</a>.
+   <p>The <a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-15"><code>XSS-Protection</code></a> mechanism is defined almost entirely in terms of <a data-link-type="biblio" href="#biblio-csp">[CSP]</a>.
 This is intentional, as it means that user agents can easily reuse all the existing machinery
 they’ve built up for that purpose. It might be confusing for developers, however, especially if,
 in the distant future, CSP becomes an esoteric thing that no one uses on its own. Error messages,
@@ -2012,46 +2030,65 @@ honorably Socratic tradition.</p>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#dom-reflectedxsspolicy-block">"block"</a><span>, in §3</span>
-   <li><a href="#dom-reflectedxsspolicy-block">block</a><span>, in §3</span>
-   <li><a href="#dom-reflectedxsspolicy-filter">filter</a><span>, in §3</span>
+   <li>
+    "block"
+    <ul>
+     <li><a href="#dom-reflectedxsspolicy-block">enum-value for ReflectedXSSPolicy</a><span>, in §3</span>
+     <li><a href="#dom-evalpolicy-block">enum-value for EvalPolicy</a><span>, in §3</span>
+    </ul>
+   <li>
+    block
+    <ul>
+     <li><a href="#dom-reflectedxsspolicy-block">enum-value for ReflectedXSSPolicy</a><span>, in §3</span>
+     <li><a href="#dom-evalpolicy-block">enum-value for EvalPolicy</a><span>, in §3</span>
+    </ul>
+   <li>
+    eval
+    <ul>
+     <li><a href="#dom-xssprotectionpolicy-eval">dict-member for XSSProtectionPolicy</a><span>, in §3</span>
+     <li><a href="#xssprotectionpolicy-eval">dfn for XSSProtectionPolicy</a><span>, in §3.1</span>
+    </ul>
+   <li><a href="#enumdef-evalpolicy">EvalPolicy</a><span>, in §3</span>
    <li><a href="#dom-reflectedxsspolicy-filter">"filter"</a><span>, in §3</span>
+   <li><a href="#dom-reflectedxsspolicy-filter">filter</a><span>, in §3</span>
    <li>
     hash
     <ul>
      <li><a href="#dom-xssprotectionpolicy-hash">dict-member for XSSProtectionPolicy</a><span>, in §3</span>
-     <li><a href="#xssprotectionpolicy-hash">dfn for XSSProtectionPolicy</a><span>, in §3.1</span>
+     <li><a href="#xssprotectionpolicy-hash">dfn for XSSProtectionPolicy</a><span>, in §3.2</span>
     </ul>
    <li><a href="#xss-protection-policy-hash-set">hash set</a><span>, in §2.1</span>
-   <li><a href="#dom-reflectedxsspolicy-ignore">"ignore"</a><span>, in §3</span>
    <li><a href="#dom-reflectedxsspolicy-ignore">ignore</a><span>, in §3</span>
+   <li><a href="#dom-reflectedxsspolicy-ignore">"ignore"</a><span>, in §3</span>
    <li>
     nonce
     <ul>
      <li><a href="#xss-protection-policy-nonce">dfn for XSS protection policy</a><span>, in §2.1</span>
      <li><a href="#dom-xssprotectionpolicy-nonce">dict-member for XSSProtectionPolicy</a><span>, in §3</span>
-     <li><a href="#xssprotectionpolicy-nonce">dfn for XSSProtectionPolicy</a><span>, in §3.2</span>
+     <li><a href="#xssprotectionpolicy-nonce">dfn for XSSProtectionPolicy</a><span>, in §3.3</span>
     </ul>
-   <li><a href="#document-reflected-xss-policy">reflected XSS policy</a><span>, in §4.2</span>
    <li><a href="#enumdef-reflectedxsspolicy">ReflectedXSSPolicy</a><span>, in §3</span>
+   <li><a href="#document-reflected-xss-policy">reflected XSS policy</a><span>, in §4.2</span>
    <li>
     reflection
     <ul>
      <li><a href="#dom-xssprotectionpolicy-reflection">dict-member for XSSProtectionPolicy</a><span>, in §3</span>
-     <li><a href="#xssprotectionpolicy-reflection">dfn for XSSProtectionPolicy</a><span>, in §3.3</span>
+     <li><a href="#xssprotectionpolicy-reflection">dfn for XSSProtectionPolicy</a><span>, in §3.4</span>
     </ul>
    <li><a href="#xss-protection-policy-reflection-policy">reflection policy</a><span>, in §2.1</span>
    <li>
     report
     <ul>
      <li><a href="#dom-xssprotectionpolicy-report">dict-member for XSSProtectionPolicy</a><span>, in §3</span>
-     <li><a href="#xssprotectionpolicy-report">dfn for XSSProtectionPolicy</a><span>, in §3.4</span>
+     <li><a href="#xssprotectionpolicy-report">dfn for XSSProtectionPolicy</a><span>, in §3.5</span>
     </ul>
    <li><a href="#xss-protection-policy-reporting-group">reporting group</a><span>, in §2.1</span>
    <li><a href="#serialized-xss-protection-policy">serialized XSS protection policy</a><span>, in §3</span>
+   <li><a href="#dom-evalpolicy-unsafe-allow">unsafe-allow</a><span>, in §3</span>
+   <li><a href="#dom-evalpolicy-unsafe-allow">"unsafe-allow"</a><span>, in §3</span>
    <li><a href="#http-headerdef-xss-protection">XSS-Protection</a><span>, in §3</span>
-   <li><a href="#xss-protection-policy">XSS protection policy</a><span>, in §2.1</span>
    <li><a href="#dictdef-xssprotectionpolicy">XSSProtectionPolicy</a><span>, in §3</span>
+   <li><a href="#xss-protection-policy">XSS protection policy</a><span>, in §2.1</span>
   </ul>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
@@ -2162,7 +2199,13 @@ honorably Socratic tradition.</p>
   <a class="s" href="#dom-reflectedxsspolicy-block">"block"</a>
 };
 
+<span class="kt">enum</span> <a class="nv" href="#enumdef-evalpolicy">EvalPolicy</a> {
+  <a class="s" href="#dom-evalpolicy-block">"block"</a>,
+  <a class="s" href="#dom-evalpolicy-unsafe-allow">"unsafe-allow"</a>
+};
+
 <span class="kt">dictionary</span> <a class="nv" href="#dictdef-xssprotectionpolicy">XSSProtectionPolicy</a> {
+  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy">EvalPolicy</a> <a class="nv" data-default="&quot;block&quot;" data-type="EvalPolicy " href="#dom-xssprotectionpolicy-eval">eval</a> = "block";
   <span class="kt">sequence</span>&lt;<span class="kt">DOMString</span>> <a class="nv" data-type="sequence<DOMString> " href="#dom-xssprotectionpolicy-hash">hash</a>;
   <span class="kt">DOMString</span> <a class="nv" data-type="DOMString " href="#dom-xssprotectionpolicy-nonce">nonce</a>;
   <a class="n" data-link-type="idl-name" href="#enumdef-reflectedxsspolicy">ReflectedXSSPolicy</a> <a class="nv" data-default="&quot;block&quot;" data-type="ReflectedXSSPolicy " href="#dom-xssprotectionpolicy-reflection">reflection</a> = "block";
@@ -2235,14 +2278,15 @@ violation report?<a href="#issue-fbed4d71"> ↵ </a></div>
     <li><a href="#ref-for-http-headerdef-xss-protection-3">2.2.1. 
   Obtain a set of XSS protection policies for response. </a>
     <li><a href="#ref-for-http-headerdef-xss-protection-4">3. The XSS-Protection HTTP Response Header</a>
-    <li><a href="#ref-for-http-headerdef-xss-protection-5">3.1. The hash member</a> <a href="#ref-for-http-headerdef-xss-protection-6">(2)</a>
-    <li><a href="#ref-for-http-headerdef-xss-protection-7">3.2. The nonce member</a> <a href="#ref-for-http-headerdef-xss-protection-8">(2)</a>
-    <li><a href="#ref-for-http-headerdef-xss-protection-9">3.3. The reflection member</a> <a href="#ref-for-http-headerdef-xss-protection-10">(2)</a>
-    <li><a href="#ref-for-http-headerdef-xss-protection-11">3.4. The report member</a>
-    <li><a href="#ref-for-http-headerdef-xss-protection-12">4. Integrations</a>
-    <li><a href="#ref-for-http-headerdef-xss-protection-13">4.2.1. 
+    <li><a href="#ref-for-http-headerdef-xss-protection-5">3.1. The eval member</a>
+    <li><a href="#ref-for-http-headerdef-xss-protection-6">3.2. The hash member</a> <a href="#ref-for-http-headerdef-xss-protection-7">(2)</a>
+    <li><a href="#ref-for-http-headerdef-xss-protection-8">3.3. The nonce member</a> <a href="#ref-for-http-headerdef-xss-protection-9">(2)</a>
+    <li><a href="#ref-for-http-headerdef-xss-protection-10">3.4. The reflection member</a> <a href="#ref-for-http-headerdef-xss-protection-11">(2)</a>
+    <li><a href="#ref-for-http-headerdef-xss-protection-12">3.5. The report member</a>
+    <li><a href="#ref-for-http-headerdef-xss-protection-13">4. Integrations</a>
+    <li><a href="#ref-for-http-headerdef-xss-protection-14">4.2.1. 
   Initialize a Document's reflected XSS policy. </a>
-    <li><a href="#ref-for-http-headerdef-xss-protection-14">5.1. Error Messages</a>
+    <li><a href="#ref-for-http-headerdef-xss-protection-15">5.1. Error Messages</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="enumdef-reflectedxsspolicy">
@@ -2256,19 +2300,31 @@ violation report?<a href="#issue-fbed4d71"> ↵ </a></div>
   <aside class="dfn-panel" data-for="dom-reflectedxsspolicy-ignore">
    <b><a href="#dom-reflectedxsspolicy-ignore">#dom-reflectedxsspolicy-ignore</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-reflectedxsspolicy-ignore-1">3.3. The reflection member</a>
+    <li><a href="#ref-for-dom-reflectedxsspolicy-ignore-1">3.4. The reflection member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-reflectedxsspolicy-filter">
    <b><a href="#dom-reflectedxsspolicy-filter">#dom-reflectedxsspolicy-filter</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-reflectedxsspolicy-filter-1">3.3. The reflection member</a> <a href="#ref-for-dom-reflectedxsspolicy-filter-2">(2)</a>
+    <li><a href="#ref-for-dom-reflectedxsspolicy-filter-1">3.4. The reflection member</a> <a href="#ref-for-dom-reflectedxsspolicy-filter-2">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-reflectedxsspolicy-block">
    <b><a href="#dom-reflectedxsspolicy-block">#dom-reflectedxsspolicy-block</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-reflectedxsspolicy-block-1">3.3. The reflection member</a> <a href="#ref-for-dom-reflectedxsspolicy-block-2">(2)</a>
+    <li><a href="#ref-for-dom-reflectedxsspolicy-block-1">3.4. The reflection member</a> <a href="#ref-for-dom-reflectedxsspolicy-block-2">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="enumdef-evalpolicy">
+   <b><a href="#enumdef-evalpolicy">#enumdef-evalpolicy</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-enumdef-evalpolicy-1">3. The XSS-Protection HTTP Response Header</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xssprotectionpolicy-eval">
+   <b><a href="#dom-xssprotectionpolicy-eval">#dom-xssprotectionpolicy-eval</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xssprotectionpolicy-eval-1">3.1. The eval member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xssprotectionpolicy-hash">
@@ -2283,7 +2339,7 @@ violation report?<a href="#issue-fbed4d71"> ↵ </a></div>
    <ul>
     <li><a href="#ref-for-dom-xssprotectionpolicy-nonce-1">2.2.1. 
   Obtain a set of XSS protection policies for response. </a>
-    <li><a href="#ref-for-dom-xssprotectionpolicy-nonce-2">3.4. The report member</a>
+    <li><a href="#ref-for-dom-xssprotectionpolicy-nonce-2">3.5. The report member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xssprotectionpolicy-reflection">
@@ -2291,7 +2347,7 @@ violation report?<a href="#issue-fbed4d71"> ↵ </a></div>
    <ul>
     <li><a href="#ref-for-dom-xssprotectionpolicy-reflection-1">2.2.1. 
   Obtain a set of XSS protection policies for response. </a>
-    <li><a href="#ref-for-dom-xssprotectionpolicy-reflection-2">3.3. The reflection member</a>
+    <li><a href="#ref-for-dom-xssprotectionpolicy-reflection-2">3.4. The reflection member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xssprotectionpolicy-report">
@@ -2299,20 +2355,27 @@ violation report?<a href="#issue-fbed4d71"> ↵ </a></div>
    <ul>
     <li><a href="#ref-for-dom-xssprotectionpolicy-report-1">2.2.1. 
   Obtain a set of XSS protection policies for response. </a>
-    <li><a href="#ref-for-dom-xssprotectionpolicy-report-2">3.4. The report member</a> <a href="#ref-for-dom-xssprotectionpolicy-report-3">(2)</a>
+    <li><a href="#ref-for-dom-xssprotectionpolicy-report-2">3.5. The report member</a> <a href="#ref-for-dom-xssprotectionpolicy-report-3">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="xssprotectionpolicy-eval">
+   <b><a href="#xssprotectionpolicy-eval">#xssprotectionpolicy-eval</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-xssprotectionpolicy-eval-1">3.1. The eval member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xssprotectionpolicy-hash">
    <b><a href="#xssprotectionpolicy-hash">#xssprotectionpolicy-hash</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xssprotectionpolicy-hash-1">3.1. The hash member</a>
+    <li><a href="#ref-for-xssprotectionpolicy-hash-1">3.1. The eval member</a>
+    <li><a href="#ref-for-xssprotectionpolicy-hash-2">3.2. The hash member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xssprotectionpolicy-nonce">
    <b><a href="#xssprotectionpolicy-nonce">#xssprotectionpolicy-nonce</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-xssprotectionpolicy-nonce-1">1. Introduction</a>
-    <li><a href="#ref-for-xssprotectionpolicy-nonce-2">3.2. The nonce member</a>
+    <li><a href="#ref-for-xssprotectionpolicy-nonce-2">3.3. The nonce member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="document-reflected-xss-policy">
