@@ -145,6 +145,9 @@ value is the string "`default`" unless otherwise specified.
 Each policy has a <dfn for="XSS protection policy">reflection policy</dfn> which is one of
 "`ignore`", "`filter`", or "`block`". Its value is "`block`" unless otherwise specified.
 
+Each policy has a <dfn for="XSS protection policy">eval policy</dfn> which is either "`block`" or
+"`unsafe-eval`". Its value is "`block`" unless otherwise specified.
+
 Algorithms {#algorithms}
 ----------
 
@@ -189,7 +192,11 @@ empty.
         <a grammar>`token`</a> grammar (as defined in [[!RFC7230]]), then set |policy|'s
         <a for="XSS protection policy">reporting group</a> to |value|.
 
-    6.  Append |policy| to |policies|.
+    6.  If |item| has a {{XSSProtectionPolicy/eval}} member whose value (|value|) is a valid
+        {{EvalPolicy}}, then set |policy|'s <a for="XSS protection policy">eval policy</a> to
+        |value|.
+
+    7.  Append |policy| to |policies|.
     
 6.  Return |policies|.
 
@@ -426,30 +433,33 @@ enforce the <a>XSS protection policy</a> it specifies.
 
     4.  Let |script-src| be the string "`'strict-dynamic' `".
 
-    5.  If |policy|'s <a for="XSS protection policy">nonce</a> is not an empty string, append to
+    5.  If |policy| has a <a for="XSS protection policy">eval policy</a> (|eval|) of
+        "`unsafe-allow`", then append "`'unsafe-eval' `" to |script-src|.
+
+    6.  If |policy|'s <a for="XSS protection policy">nonce</a> is not an empty string, append to
         |script-src| the result of replacing "`%s`" in the string "`'nonce-%s'` " with |policy|'s
         <a for="XSS protection policy">nonce</a>.
 
-    6.  For each |digest| in |policy|'s <a for="XSS protection policy">hash set</a>:
+    7.  For each |digest| in |policy|'s <a for="XSS protection policy">hash set</a>:
 
         1.  Append to |script-src| the result of replacing "`%s`" in the string "`'%s'` " with
             |digest|.
 
-    7.  Add a new <a>directive</a> to |csp|'s <a for="policy">directive set</a> whose
+    8.  Add a new <a>directive</a> to |csp|'s <a for="policy">directive set</a> whose
         <a for="directive">name</a> is "`script-src`", and whose <a for="directive">value</a> is
         |script-src|.
 
-    8.  Add a new <a>directive</a> to |csp|'s <a for="policy">directive set</a> whose
+    9.  Add a new <a>directive</a> to |csp|'s <a for="policy">directive set</a> whose
         <a for="directive">name</a> is "`object-src`", and whose <a for="directive">value</a> is
         "`'none'`".
 
         ISSUE: This probably needs to be somehow configurable.
 
-    9.  If |policy| has a <a for="XSS protection policy">reporting group</a> (|group|) which is not
+    10. If |policy| has a <a for="XSS protection policy">reporting group</a> (|group|) which is not
         an empty string, then add a <a>directive</a> to |csp| whose <a for="directive">name</a>
         is "`report-to`", and whose <a for="directive">value</a> is |group|.
 
-    10. Append |policy| to |response|'s <a for="response">CSP list</a>.
+    11. Append |policy| to |response|'s <a for="response">CSP list</a>.
 
 
 Integration with HTML {#monkey-patching-html}

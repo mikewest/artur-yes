@@ -1556,6 +1556,8 @@ value is the empty set unless otherwise specified.</p>
 value is the string "<code>default</code>" unless otherwise specified.</p>
    <p>Each policy has a <dfn class="dfn-paneled" data-dfn-for="XSS protection policy" data-dfn-type="dfn" data-noexport="" id="xss-protection-policy-reflection-policy">reflection policy</dfn> which is one of
 "<code>ignore</code>", "<code>filter</code>", or "<code>block</code>". Its value is "<code>block</code>" unless otherwise specified.</p>
+   <p>Each policy has a <dfn class="dfn-paneled" data-dfn-for="XSS protection policy" data-dfn-type="dfn" data-noexport="" id="xss-protection-policy-eval-policy">eval policy</dfn> which is either "<code>block</code>" or
+"<code>unsafe-eval</code>". Its value is "<code>block</code>" unless otherwise specified.</p>
    <h3 class="heading settled" data-level="2.2" id="algorithms"><span class="secno">2.2. </span><span class="content">Algorithms</span><a class="self-link" href="#algorithms"></a></h3>
    <h4 class="heading settled algorithm" data-algorithm="Obtain a set of XSS protection policies for response." data-level="2.2.1" id="policy-for-response"><span class="secno">2.2.1. </span><span class="content"> Obtain a set of XSS protection policies for <var>response</var>. </span><a class="self-link" href="#policy-for-response"></a></h4>
    <p>Given a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response">response</a> (<var>response</var>), this algorithm returns a sequence of <a data-link-type="dfn" href="#xss-protection-policy" id="ref-for-xss-protection-policy-1">XSS protection
@@ -1588,6 +1590,8 @@ empty.</p>
   policy</a> to <var>value</var>.</p>
       <li data-md="">
        <p>If <var>item</var> has a <code class="idl"><a data-link-type="idl" href="#dom-xssprotectionpolicy-report" id="ref-for-dom-xssprotectionpolicy-report-1">report</a></code> member whose value (<var>value</var>) matches the <a data-link-type="grammar" href="https://tools.ietf.org/html/rfc7230#section-3.2.6"><code>token</code></a> grammar (as defined in <a data-link-type="biblio" href="#biblio-rfc7230">[RFC7230]</a>), then set <var>policy</var>’s <a data-link-type="dfn" href="#xss-protection-policy-reporting-group" id="ref-for-xss-protection-policy-reporting-group-1">reporting group</a> to <var>value</var>.</p>
+      <li data-md="">
+       <p>If <var>item</var> has a <code class="idl"><a data-link-type="idl" href="#dom-xssprotectionpolicy-eval" id="ref-for-dom-xssprotectionpolicy-eval-1">eval</a></code> member whose value (<var>value</var>) is a valid <code class="idl"><a data-link-type="idl" href="#enumdef-evalpolicy" id="ref-for-enumdef-evalpolicy-1">EvalPolicy</a></code>, then set <var>policy</var>’s <a data-link-type="dfn" href="#xss-protection-policy-eval-policy" id="ref-for-xss-protection-policy-eval-policy-1">eval policy</a> to <var>value</var>.</p>
       <li data-md="">
        <p>Append <var>policy</var> to <var>policies</var>.</p>
      </ol>
@@ -1627,7 +1631,7 @@ boils down to a representation of the following dictionary type:</p>
 };
 
 <span class="kt">dictionary</span> <dfn class="nv idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-xssprotectionpolicy">XSSProtectionPolicy<a class="self-link" href="#dictdef-xssprotectionpolicy"></a></dfn> {
-  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy" id="ref-for-enumdef-evalpolicy-1">EvalPolicy</a> <dfn class="nv dfn-paneled idl-code" data-default="&quot;block&quot;" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="EvalPolicy " id="dom-xssprotectionpolicy-eval">eval</dfn> = "block";
+  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy" id="ref-for-enumdef-evalpolicy-2">EvalPolicy</a> <dfn class="nv dfn-paneled idl-code" data-default="&quot;block&quot;" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="EvalPolicy " id="dom-xssprotectionpolicy-eval">eval</dfn> = "block";
   <span class="kt">sequence</span>&lt;<span class="kt">DOMString</span>> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="sequence<DOMString> " id="dom-xssprotectionpolicy-hash">hash</dfn>;
   <span class="kt">DOMString</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="DOMString " id="dom-xssprotectionpolicy-nonce">nonce</dfn>;
   <a class="n" data-link-type="idl-name" href="#enumdef-reflectedxsspolicy" id="ref-for-enumdef-reflectedxsspolicy-2">ReflectedXSSPolicy</a> <dfn class="nv dfn-paneled idl-code" data-default="&quot;block&quot;" data-dfn-for="XSSProtectionPolicy" data-dfn-type="dict-member" data-export="" data-type="ReflectedXSSPolicy " id="dom-xssprotectionpolicy-reflection">reflection</dfn> = "block";
@@ -1643,7 +1647,7 @@ towards <code>eval()</code>. By default, the value is "<code>block</code>", whic
 to allow such conversion.</p>
    <div class="example" id="example-a10e66eb">
     <a class="self-link" href="#example-a10e66eb"></a> MegaCorp, Inc. has a number of libraries which require <code>eval()</code> for various purposes. They can
-  allow such execution by sending an appropriate <code class="idl"><a data-link-type="idl" href="#dom-xssprotectionpolicy-eval" id="ref-for-dom-xssprotectionpolicy-eval-1">eval</a></code> member along with
+  allow such execution by sending an appropriate <code class="idl"><a data-link-type="idl" href="#dom-xssprotectionpolicy-eval" id="ref-for-dom-xssprotectionpolicy-eval-2">eval</a></code> member along with
   their XSS protection policy: 
 <pre><a data-link-type="http-header" href="#http-headerdef-xss-protection" id="ref-for-http-headerdef-xss-protection-5">XSS-Protection</a>: { "<a data-link-type="dfn" href="#xssprotectionpolicy-hash" id="ref-for-xssprotectionpolicy-hash-1">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>", "<a data-link-type="dfn" href="#xssprotectionpolicy-eval" id="ref-for-xssprotectionpolicy-eval-1">eval</a>": "unsafe-allow" ] }
 </pre>
@@ -1761,6 +1765,9 @@ enforce the <a data-link-type="dfn" href="#xss-protection-policy" id="ref-for-xs
        <p>Let <var>csp</var> be a new <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#policy">Content Security Policy</a> with an empty <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#policy-directive-set">directive set</a>, and a <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#policy-disposition">disposition</a> of "<code>enforce</code>".</p>
       <li data-md="">
        <p>Let <var>script-src</var> be the string "<code>'strict-dynamic'</code>".</p>
+      <li data-md="">
+       <p>If <var>policy</var> has a <a data-link-type="dfn" href="#xss-protection-policy-eval-policy" id="ref-for-xss-protection-policy-eval-policy-2">eval policy</a> (<var>eval</var>) of
+  "<code>unsafe-allow</code>", then append "<code>'unsafe-eval'</code>" to <var>script-src</var>.</p>
       <li data-md="">
        <p>If <var>policy</var>’s <a data-link-type="dfn" href="#xss-protection-policy-nonce" id="ref-for-xss-protection-policy-nonce-4">nonce</a> is not an empty string, append to <var>script-src</var> the result of replacing "<code>%s</code>" in the string "<code>'nonce-%s'</code> " with <var>policy</var>’s <a data-link-type="dfn" href="#xss-protection-policy-nonce" id="ref-for-xss-protection-policy-nonce-5">nonce</a>.</p>
       <li data-md="">
@@ -2049,6 +2056,7 @@ honorably Socratic tradition.</p>
      <li><a href="#xssprotectionpolicy-eval">dfn for XSSProtectionPolicy</a><span>, in §3.1</span>
     </ul>
    <li><a href="#enumdef-evalpolicy">EvalPolicy</a><span>, in §3</span>
+   <li><a href="#xss-protection-policy-eval-policy">eval policy</a><span>, in §2.1</span>
    <li><a href="#dom-reflectedxsspolicy-filter">"filter"</a><span>, in §3</span>
    <li><a href="#dom-reflectedxsspolicy-filter">filter</a><span>, in §3</span>
    <li>
@@ -2067,8 +2075,8 @@ honorably Socratic tradition.</p>
      <li><a href="#dom-xssprotectionpolicy-nonce">dict-member for XSSProtectionPolicy</a><span>, in §3</span>
      <li><a href="#xssprotectionpolicy-nonce">dfn for XSSProtectionPolicy</a><span>, in §3.3</span>
     </ul>
-   <li><a href="#enumdef-reflectedxsspolicy">ReflectedXSSPolicy</a><span>, in §3</span>
    <li><a href="#document-reflected-xss-policy">reflected XSS policy</a><span>, in §4.2</span>
+   <li><a href="#enumdef-reflectedxsspolicy">ReflectedXSSPolicy</a><span>, in §3</span>
    <li>
     reflection
     <ul>
@@ -2271,6 +2279,15 @@ violation report?<a href="#issue-fbed4d71"> ↵ </a></div>
   Initialize a Document's reflected XSS policy. </a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="xss-protection-policy-eval-policy">
+   <b><a href="#xss-protection-policy-eval-policy">#xss-protection-policy-eval-policy</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-xss-protection-policy-eval-policy-1">2.2.1. 
+  Obtain a set of XSS protection policies for response. </a>
+    <li><a href="#ref-for-xss-protection-policy-eval-policy-2">4.1.1. 
+  Populate response’s CSP list from its XSS protection policy. </a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="http-headerdef-xss-protection">
    <b><a href="#http-headerdef-xss-protection">#http-headerdef-xss-protection</a></b><b>Referenced in:</b>
    <ul>
@@ -2318,13 +2335,17 @@ violation report?<a href="#issue-fbed4d71"> ↵ </a></div>
   <aside class="dfn-panel" data-for="enumdef-evalpolicy">
    <b><a href="#enumdef-evalpolicy">#enumdef-evalpolicy</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-enumdef-evalpolicy-1">3. The XSS-Protection HTTP Response Header</a>
+    <li><a href="#ref-for-enumdef-evalpolicy-1">2.2.1. 
+  Obtain a set of XSS protection policies for response. </a>
+    <li><a href="#ref-for-enumdef-evalpolicy-2">3. The XSS-Protection HTTP Response Header</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xssprotectionpolicy-eval">
    <b><a href="#dom-xssprotectionpolicy-eval">#dom-xssprotectionpolicy-eval</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-xssprotectionpolicy-eval-1">3.1. The eval member</a>
+    <li><a href="#ref-for-dom-xssprotectionpolicy-eval-1">2.2.1. 
+  Obtain a set of XSS protection policies for response. </a>
+    <li><a href="#ref-for-dom-xssprotectionpolicy-eval-2">3.1. The eval member</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xssprotectionpolicy-hash">
