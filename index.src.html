@@ -1,7 +1,7 @@
 <pre class="metadata">
-Title: XSS Protection
+Title: Anti-XSS Response-Time Uniqueness Requirement
 Status: DREAM
-Shortname: xss-protection
+Shortname: artur-yes
 Level: None
 Editor: Mike West
 Abstract: This document describes a mechanism which allows developers to restrict the ways in which their pages can execute script, with the goal of mitigating cross-site scripting vulnerabilities.
@@ -92,19 +92,17 @@ That research, and related discussions, has lead to new approaches within CSP (l
 described in [[CSP3#strict-dynamic-usage]]) which seem promising, but the syntax ends up being
 somewhat verbose and the behavior confusing due to backwards compatibility concerns.
 
-This document proposes a policy language focused strictly on XSS protection, pulling in a subset
-of CSP's functionality, along with existing functionality such as that supported by the
-`X-XSS-Protection` HTTP response header. The goal is to provide the same XSS mitigation guarantees
-as a verbose and complicated CSP, in a pithy and comprehensible package.
+This document proposes a policy language focused strictly on XSS protection, with the goal of
+providing the same XSS mitigation guarantees as a verbose and complicated CSP, but in a pithy and
+comprehensible package.
 
 <div class="example">
   MegaCorp, Inc. wishes to defend against cross-site scripting. It can do so by generating a unique
-  string for each page load, and including that string both in an
-  <a http-header>`XSS-Protection`</a> header and in the <{script}> element's <{script/nonce}>
-  attribute, as follows:
+  string for each page load, and including that string both in an <a http-header>`ARTUR`</a> header
+  and in the <{script}> element's <{script/nonce}> attribute, as follows:
 
   <pre highlight="yaml">
-    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy" dictionary-member>nonce</a>": "<strong>abcdefg</strong>" }
+    <a http-header>ARTUR</a>: { "<a for="ArturPolicy" dictionary-member>nonce</a>": "<strong>abcdefg</strong>" }
   </pre>
 
   <pre highlight="html">
@@ -114,10 +112,6 @@ as a verbose and complicated CSP, in a pithy and comprehensible package.
     &lt;!-- This script won't (no nonce). --&gt;
     &lt;script src="script.js"&gt;&lt;/script&gt;
   </pre>
-
-  Note: This will also have the happy side-effect of disabling plugins and enabling the user agent's
-  built-in XSS protections in "blocking" mode rather than the user agent's default "filtering" mode
-  for the current page. Hooray!
 </div>
 
 Framework {#framework}
@@ -130,42 +124,38 @@ enforcement.
 Policy {#policy}
 ------
 
-An <dfn export>XSS protection policy</dfn> defines a set of behaviors which are to be applied to
+An <dfn export>ARTUR policy</dfn> defines a set of behaviors which are to be applied to
 a {{Window}} or {{WorkerGlobalScope}}.
 
-Each policy has a <dfn for="XSS protection policy">nonce</dfn> which is a string. Its value is the
+Each policy has a <dfn for="ARTUR policy">nonce</dfn> which is a string. Its value is the
 empty string unless otherwise specified.
 
-Each policy has a <dfn for="XSS protection policy">hash set</dfn> which is a set of strings. Its
+Each policy has a <dfn for="ARTUR policy">hash set</dfn> which is a set of strings. Its
 value is the empty set unless otherwise specified.
 
-Each policy has a <dfn for="XSS protection policy">reporting disposition</dfn> which is either
+Each policy has a <dfn for="ARTUR policy">reporting disposition</dfn> which is either
 "`enforce`" or "`report`". Its value is "`enforce`" unless otherwise specified.
 
-Each policy has a <dfn for="XSS protection policy">reporting group</dfn> which is a string. Its
+Each policy has a <dfn for="ARTUR policy">reporting group</dfn> which is a string. Its
 value is the string "`default`" unless otherwise specified.
 
-Each policy has a <dfn for="XSS protection policy">reflection policy</dfn> which is one of
-"`ignore`", "`filter`", or "`block`". Its value is "`block`" unless otherwise specified.
-
-Each policy has a <dfn for="XSS protection policy">eval policy</dfn> which is either "`block`" or
+Each policy has a <dfn for="ARTUR policy">eval policy</dfn> which is either "`block`" or
 "`unsafe-eval`". Its value is "`block`" unless otherwise specified.
 
 Algorithms {#algorithms}
 ----------
 
 <h4 algorithm id="policy-for-response">
-  Obtain a set of XSS protection policies for |response|.
+  Obtain a set of ARTUR policies for |response|.
 </h4>
 
-Given a <a>response</a> (|response|), this algorithm returns a sequence of <a>XSS protection
-policy</a> objects. If no valid policy is found for |response|, the returned sequence will be
-empty.
+Given a <a>response</a> (|response|), this algorithm returns a sequence of <a>ARTUR policy</a>
+objects. If no valid policy is found for |response|, the returned sequence will be empty.
 
 1.  Let |policies| be an empty sequence.
 
 2.  Let |value| be the result of <a lt="parse a header value">parsing</a>
-    "<a http-header>`XSS-Protection`</a>" in |response|'s <a for="response">header list</a>.
+    "<a http-header>`ARTUR`</a>" in |response|'s <a for="response">header list</a>.
 
 3.  If |value| is `null`, return |policies|.
 
@@ -174,29 +164,25 @@ empty.
 
 5.  For each |item| in |list|:
 
-    1.  Let |policy| be a new <a>XSS protection policy</a>.
+    1.  Let |policy| be a new <a>ARTUR policy</a>.
 
-    2.  If |item| has a {{XSSProtectionPolicy/hash}} member whose value (|value|) is a
+    2.  If |item| has a {{ArturPolicy/hash}} member whose value (|value|) is a
         `sequence<DOMString>`, then for each |digest| in |value|:
         
         1.  If |digest| matches the ABNF grammar
             <code><a grammar>hash-algorithm</a>-<a grammar>hash-source</a></code> (as defined in
-            [[!CSP]]), then add |digest| to |policy|'s <a for="XSS protection policy">hash set</a>.
+            [[!CSP]]), then add |digest| to |policy|'s <a for="ARTUR policy">hash set</a>.
 
-    3.  If |item| has a {{XSSProtectionPolicy/nonce}} member whose value (|value|) is a
+    3.  If |item| has a {{ArturPolicy/nonce}} member whose value (|value|) is a
         `DOMString` that matches the ABNF grammar <a grammar>`base64-value`</a> (as defined in
-        [[!CSP]]), then set |policy|'s <a for="XSS protection policy">nonce</a> to |value|.
+        [[!CSP]]), then set |policy|'s <a for="ARTUR policy">nonce</a> to |value|.
 
-    4.  If |item| has a {{XSSProtectionPolicy/reflection}} member whose value (|value|) is a valid
-        {{ReflectedXSSPolicy}}, then set |policy|'s <a for="XSS protection policy">reflection
-        policy</a> to |value|.
-
-    5.  If |item| has a {{XSSProtectionPolicy/report}} member whose value (|value|) matches the
+    5.  If |item| has a {{ArturPolicy/report}} member whose value (|value|) matches the
         <a grammar>`token`</a> grammar (as defined in [[!RFC7230]]), then set |policy|'s
-        <a for="XSS protection policy">reporting group</a> to |value|.
+        <a for="ARTUR policy">reporting group</a> to |value|.
 
-    6.  If |item| has a {{XSSProtectionPolicy/eval}} member whose value (|value|) is a valid
-        {{EvalPolicy}}, then set |policy|'s <a for="XSS protection policy">eval policy</a> to
+    6.  If |item| has a {{ArturPolicy/eval}} member whose value (|value|) is a valid
+        {{EvalPolicy}}, then set |policy|'s <a for="ARTUR policy">eval policy</a> to
         |value|.
 
     7.  Append |policy| to |policies|.
@@ -204,56 +190,48 @@ empty.
 6.  Return |policies|.
 
 
-The `XSS-Protection` HTTP Response Header {#header}
+The `ARTUR` HTTP Response Header {#header}
 =========================================
 
-The <dfn export http-header>`XSS-Protection`</dfn> HTTP response header field is the delivery
-mechanism for the mitigations this document offers. The header's value is a <dfn>serialized XSS
-protection policy</dfn> represented by the following ABNF [[!RFC5234]]:
+The <dfn export http-header>`ARTUR`</dfn> HTTP response header field is the delivery
+mechanism for the mitigations this document offers. The header's value is a <dfn>serialized ARTUR
+policy</dfn> represented by the following ABNF [[!RFC5234]]:
 
 <pre>
-  XSS-Protection = <a grammar>json-field-value</a>
+  ARTUR = <a grammar>json-field-value</a>
 </pre>
 
 <div class="example">
   <pre>
-    <a http-header>XSS-Protection</a>: { "nonce": "abcdefg", "reflection": "block", "report": "group1" }
+    <a http-header>ARTUR</a>: { "nonce": "abcdefg", "report": "group1" }
   </pre>
 
-  This header will have more or less the same effect as delivering the following headers:
+  This header will have more or less the same effect as delivering the following header:
 
   <pre>
     <a>Content-Security-Policy</a>: script-src 'strict-dynamic' 'nonce-abcdegf';
                              object-src 'none';
                              report-to group1;
-    X-XSS-Protection: 1; mode=block; report=group1;
   </pre>
 </div>
 
-A server MAY send different `X-XSS-Protection` header field values with different representations
-of the same resource.
+A server MAY send different `ARTUR` header field values with different representations of the same
+resource.
 
 The header's value is interpreted as an array of JSON objects, as described in Section 4 of
 [[!HTTP-JFV]]. Detailed parsing instructions are found in [[#policy-for-response]], but the syntax
 boils down to a representation of the following dictionary type:
 
 <pre class="idl">
-  enum ReflectedXSSPolicy {
-    "ignore",
-    "filter",
-    "block"
-  };
-
   enum EvalPolicy {
     "block",
     "unsafe-allow"
   };
 
-  dictionary XSSProtectionPolicy {
+  dictionary ArturPolicy {
     EvalPolicy eval = "block";
     sequence&lt;DOMString&gt; hash;
     DOMString nonce;
-    ReflectedXSSPolicy reflection = "block";
     DOMString report = "default";
     boolean reportOnly = false;
   };
@@ -266,25 +244,25 @@ unknown members when parsing the header.
 The `eval` member {#eval-member}
 -----------------
 
-The <dfn dictionary-member for="XSSProtectionPolicy">eval</dfn> member defines the page's policy
+The <dfn dictionary-member for="ArturPolicy">eval</dfn> member defines the page's policy
 towards `eval()`. By default, the value is "`block`", which causes `eval()` to throw a
 `SecurityError` rather than executing a string as code. It can be set to "`unsafe-allow`" in order
 to allow such conversion.
 
 <div class="example">
   MegaCorp, Inc. has a number of libraries which require `eval()` for various purposes. They can
-  allow such execution by sending an appropriate {{XSSProtectionPolicy/eval}} member along with
-  their XSS protection policy:
+  allow such execution by sending an appropriate {{ArturPolicy/eval}} member along with
+  their ARTUR policy:
 
   <pre>
-    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>", "<a for="XSSProtectionPolicy">eval</a>": "unsafe-allow" ] }
+    <a http-header>ARTUR</a>: { "<a for="ArturPolicy">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>", "<a for="ArturPolicy">eval</a>": "unsafe-allow" ] }
   </pre>
 </div>
 
 The `hash` member {#hash-member}
 -----------------
 
-The <dfn dictionary-member for="XSSProtectionPolicy">hash</dfn> member defines a set of digests
+The <dfn dictionary-member for="ArturPolicy">hash</dfn> member defines a set of digests
 which specify specific script content which is allowed to execute on a given page.
 
 If present, the member's value MUST be a sequence of {{DOMString}}s, and each MUST adhere to the
@@ -294,12 +272,12 @@ item in the sequence that does not match that grammer MUST be ignored.
 <div class="example">
   MegaCorp, Inc. wishes to ensure that injected <{script}> elements do not execute. They can do so
   by executing a secure hash function (like those specified in [[SHA2]]) on each script they wish to
-  execute, and including the resulting list of digests in an <a http-header>`XSS-Protection`</a>
+  execute, and including the resulting list of digests in an <a http-header>`ARTUR`</a>
   header. These digests either match the inline content of a <{script}> element or event handler, or
   match a <{script}> element's <{script/integrity}> attribute:
 
   <pre>
-    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>" ] }
+    <a http-header>ARTUR</a>: { "<a for="ArturPolicy">hash</a>": [ "<strong>sha256-abcd...</strong>", "<strong>sha256-zyx...</strong>" ] }
 
     ...
 
@@ -319,7 +297,7 @@ ISSUE(w3c/webappsec-csp#78): Matching external scripts requires solidifying CSP'
 The `nonce` member {#nonce-member}
 ------------------
 
-The <dfn dictionary-member for="XSSProtectionPolicy">`nonce`</dfn> member defines a cryptographic
+The <dfn dictionary-member for="ArturPolicy">`nonce`</dfn> member defines a cryptographic
 nonce ("number used once") which can be used to ensure that only <{script}> elements whose
 <{script/nonce}> attributes contain a specific value are allowed to execute script for a given page.
 
@@ -330,11 +308,11 @@ member's value does not match that grammar, the value MUST be ignored.
 <div class="example">
   MegaCorp, Inc. wishes to ensure that injected <{script}> elements do not execute. They can do so
   by generating a unique string for each page load, and including that string both in an
-  <a http-header>`XSS-Protection`</a> header and in the <{script}> element's <{script/nonce}>
+  <a http-header>`ARTUR`</a> header and in the <{script}> element's <{script/nonce}>
   attribute, as follows:
 
   <pre>
-    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy" dictionary-member>nonce</a>": "<strong>abcdefg</strong>" }
+    <a http-header>ARTUR</a>: { "<a for="ArturPolicy" dictionary-member>nonce</a>": "<strong>abcdefg</strong>" }
 
     ...
 
@@ -342,42 +320,10 @@ member's value does not match that grammar, the value MUST be ignored.
   </pre>
 </div>
 
-The `reflection` member {#reflection-member}
------------------------
-
-The <dfn dictionary-member for="XSSProtectionPolicy">`reflection`</dfn> member controls the behavior
-of any built-in mechanisms a user agent provides to actively defend against reflected cross-site
-scripting. 
-
-The known values for this member are as follows:
-
-:   {{ReflectedXSSPolicy/ignore}}
-::  Disables the user agent's active defenses against XSS.
-:   {{ReflectedXSSPolicy/filter}}
-::  Enables the user agent's active defenses against XSS, filtering reflected script from the page.
-    This is the default behavior for most user agents that implement such protections.
-:   {{ReflectedXSSPolicy/block}}
-::  Enables the user agent's active defenses against XSS, blocking the page entirely if reflected
-    script is detected. Generally speaking, this is safer than {{ReflectedXSSPolicy/filter}}, and
-    we use it as the fallback when an <a http-header>`XSS-Protection`</a> header is delivered
-    without specifying a behavior.
-
-User agents MAY choose not to support this attribute if they do not implement such heuristics.
-
-<div class="example">
-  MegaCorp, Inc. wishes to ensure that the user agent's built-in XSS protection mechanisms are
-  active, but does not want the browser to simply filter out suspected reflections. They prefer to
-  block the page load entirely. They can do so with the following header:
-
-  <pre>
-    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy" idl>reflection</a>": "<a for="ReflectedXSSPolicy" idl>block</a>" }
-  </pre>
-</div>
-
 The `report` member {#report-member}
 -------------------
 
-The <dfn dictionary-member for="XSSProtectionPolicy">`report`</dfn> member defines the reporting
+The <dfn dictionary-member for="ArturPolicy">`report`</dfn> member defines the reporting
 group to which violation reports will be sent [[REPORTING]].
 
 The member's value MUST be a {{DOMString}}. If an empty string is provided, reporting will be
@@ -386,12 +332,12 @@ disabled.
 Note: Reporting to the group named "`default`" is enabled unless otherwise specified.
 
 <div class="example">
-  MegaCorp, Inc. wishes to receive violation reports when script execution is blocked by the XSS
-  protection policy it specifies. It can do so by sending a {{XSSProtectionPolicy/report}} member
-  along with the policy, and specifying a reporting endpoint, as follows:
+  MegaCorp, Inc. wishes to receive violation reports when script execution is blocked by the ARTUR
+  policy it specifies. It can do so by sending a {{ArturPolicy/report}} member along with the
+  policy, and specifying a reporting endpoint, as follows:
 
   <pre>
-    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy" idl>nonce</a>": "abcdefg", "<a for="XSSProtectionPolicy" idl>report</a>": "group1" }
+    <a http-header>ARTUR</a>: { "<a for="ArturPolicy" idl>nonce</a>": "abcdefg", "<a for="ArturPolicy" idl>report</a>": "group1" }
     <a http-header>Report-To</a>: { "<a spec="REPORTING">url</a>": "https://example.com/report", "<a spec="REPORTING">group</a>": "group1", "<a spec="REPORTING">max-age</a>": 10886400 }
   </pre>
 </div>
@@ -399,19 +345,19 @@ Note: Reporting to the group named "`default`" is enabled unless otherwise speci
 The `reportOnly` member {#reportOnly-member}
 -----------------------
 
-The <dfn dictionary-member for="XSSProtectionPolicy">`reportOnly`</dfn> member defines whether the
+The <dfn dictionary-member for="ArturPolicy">`reportOnly`</dfn> member defines whether the
 policy specified will actually block script execution, or whether it will operate in "report-only"
 mode, sending violation reports up to a server-side collector while allowing script execution.
 
 <div class="example">
   MegaCorp, Inc. wishes to receive violation reports when script execution would be blocked by the
-  XSS protection policy it specifies while it verifies that its nonce-generation code is working
-  correctly. It can do so by sending {{XSSProtectionPolicy/report}} and
-  {{XSSProtectionPolicy/reportOnly}} members along with the policy, and specifying a reporting
+  ARTUR policy it specifies while it verifies that its nonce-generation code is working
+  correctly. It can do so by sending {{ArturPolicy/report}} and
+  {{ArturPolicy/reportOnly}} members along with the policy, and specifying a reporting
   endpoint, as follows:
 
   <pre>
-    <a http-header>XSS-Protection</a>: { "<a for="XSSProtectionPolicy" idl>nonce</a>": "abcdefg", "<a for="XSSProtectionPolicy" idl>report</a>": "group1", "<a for="XSSProtectionPolicy">reportOnly</a>": true }
+    <a http-header>ARTUR</a>: { "<a for="ArturPolicy" idl>nonce</a>": "abcdefg", "<a for="ArturPolicy" idl>report</a>": "group1", "<a for="ArturPolicy">reportOnly</a>": true }
     <a http-header>Report-To</a>: { "<a spec="REPORTING">url</a>": "https://example.com/report", "<a spec="REPORTING">group</a>": "group1", "<a spec="REPORTING">max-age</a>": 10886400 }
   </pre>
 </div>
@@ -419,9 +365,9 @@ mode, sending violation reports up to a server-side collector while allowing scr
 Integrations {#integrations}
 ============
 
-The <a http-header>`XSS-Protection`</a> header is little more than syntactic sugar on top of
-existing processing algorithms for [[CSP]] and `X-XSS-Protection`. This section explains the ways
-in which the <a>XSS protection policy</a> is enforced for a given context:
+The <a http-header>`ARTUR`</a> header is little more than syntactic sugar on top of existing
+processing algorithms for [[CSP]]. This section explains the ways in which the <a>ARTUR
+policy</a> is enforced for a given context:
 
 Integration with Fetch {#monkey-patching-fetch}
 ----------------------
@@ -433,40 +379,40 @@ Integration with Fetch {#monkey-patching-fetch}
 ISSUE: Upstream this once we decide it's sane.
 
 <h4 algorithm id="set-response-csp-list">
-  Populate |response|'s CSP list from its XSS protection policy.
+  Populate |response|'s CSP list from its ARTUR policy.
 </h4>
 
 Given a <a>response</a> (|response|), this algorithm modifies its <a for="response">CSP list</a> to
-enforce the <a>XSS protection policy</a> it specifies.
+enforce the <a>ARTUR policy</a> it specifies.
 
 1.  For each |policy| in the result of executing [[#policy-for-response]] on |response|:
 
-    1.  If |policy|'s <a for="XSS protection policy">nonce</a> is an empty string and
-        |policy|'s <a for="XSS protection policy">hash set</a> is empty, then skip the remaining
+    1.  If |policy|'s <a for="ARTUR policy">nonce</a> is an empty string and
+        |policy|'s <a for="ARTUR policy">hash set</a> is empty, then skip the remaining
         substeps and move to the next |policy|.
 
-    2.  Assert: |policy|'s <a for="XSS protection policy">nonce</a> is either an empty string or
+    2.  Assert: |policy|'s <a for="ARTUR policy">nonce</a> is either an empty string or
         matches the <a grammar>base64-value</a> grammar specified in [[CSP]]. Likewise, |policy|'s
-        <a for="XSS protection policy">hash set</a> is either empty or all its values match the
+        <a for="ARTUR policy">hash set</a> is either empty or all its values match the
         grammar "<a grammar>hash-algorithm</a>-<a grammar>hash-source</a>". Further, |policy|'s
-        <a for="XSS protection policy">reporting group</a> is a string that matches the `token`
+        <a for="ARTUR policy">reporting group</a> is a string that matches the `token`
         grammar defined in [[RFC7230]].
 
     3.  Let |csp| be a new <a for="/" lt="policy">Content Security Policy</a> with an empty
         <a for="policy">directive set</a>, and a <a for="policy">disposition</a> of "`enforce`" if
-        |policy|'s <a for="XSS protection policy">reporting disposition</a> is "`enforce`", and
+        |policy|'s <a for="ARTUR policy">reporting disposition</a> is "`enforce`", and
         "`report`" otherwise.
 
     4.  Let |script-src| be the string "`'strict-dynamic' `".
 
-    5.  If |policy| has a <a for="XSS protection policy">eval policy</a> of "`unsafe-allow`", then
+    5.  If |policy| has a <a for="ARTUR policy">eval policy</a> of "`unsafe-allow`", then
         append "`'unsafe-eval' `" to |script-src|.
 
-    6.  If |policy|'s <a for="XSS protection policy">nonce</a> is not an empty string, append to
+    6.  If |policy|'s <a for="ARTUR policy">nonce</a> is not an empty string, append to
         |script-src| the result of replacing "`%s`" in the string "`'nonce-%s'` " with |policy|'s
-        <a for="XSS protection policy">nonce</a>.
+        <a for="ARTUR policy">nonce</a>.
 
-    7.  For each |digest| in |policy|'s <a for="XSS protection policy">hash set</a>:
+    7.  For each |digest| in |policy|'s <a for="ARTUR policy">hash set</a>:
 
         1.  Append to |script-src| the result of replacing "`%s`" in the string "`'%s'` " with
             |digest|.
@@ -481,94 +427,12 @@ enforce the <a>XSS protection policy</a> it specifies.
 
         ISSUE: This probably needs to be somehow configurable.
 
-    10. If |policy| has a <a for="XSS protection policy">reporting group</a> (|group|) which is not
+    10. If |policy| has a <a for="ARTUR policy">reporting group</a> (|group|) which is not
         an empty string, then add a <a>directive</a> to |csp| whose <a for="directive">name</a>
         is "`report-to`", and whose <a for="directive">value</a> is |group|.
 
     11. Append |policy| to |response|'s <a for="response">CSP list</a>.
 
-
-Integration with HTML {#monkey-patching-html}
----------------------
-
-1.  Each {{Document}} has a <dfn for="Document">reflected XSS policy</dfn>, which is one of
-    `null`, "`ignore`", "`filter`", or "`block`". The value is `null` unless otherwise specified.
-
-2.  When executing [[csp3#initialize-document-csp]] (currently step 8 of the <a>initializing a new
-    `Document` object</a> algorithm), HTML should also execute the algorithm defined in
-    [[#initialize-document-xss]].
-
-ISSUE: Upstream this once we decide it's sane.
-
-<h4 algorithm id="initialize-document-xss">
-  Initialize a `Document`'s reflected XSS policy.
-</h4>
-
-Given a {{Document}} (|document|), and a <a>response</a> (|response|), this algorithm sets
-|document|'s <a for="Document">reflected XSS policy</a> based on |response|'s
-<a http-header>`XSS-Protection`</a> and `X-XSS-Protection` headers.
-
-1.  Let |list| be an empty sequence.
-
-2.  Append the result of executing [[#parse-x-xss-protection]] on |response| to |list|.
-
-3.  For each |policy| in the result of executing [[#policy-for-response]] on |response|,
-    append |policy|'s <a for="XSS protection policy">reflection policy</a> to |list|.
-
-4.  Let |result| be `null`.
-
-5.  For each |item| in |list|:
-
-    1.  If |item| is "`block`", set |result| to "`block`".
-
-    2.  If |item| is "`filter`", and |result| is not "`block`", set |result| to "`filter`".
-
-    3.  If |item| is "`ignore`", and |result| is not "`block`" or "`filter`", set |result| to
-        "`ignore`".
-
-6.  Set |document|'s <a for="Document">reflected XSS policy</a> to |result|.
-
-<h4 algorithm id="parse-x-xss-protection">
-  Parse |response|'s `X-XSS-Protection` header value.
-</h4>
-
-Given a <a>response</a> (|response|), this algorithm returns `null`, "`ignore`", "`filter`", or
-"`block`" based on the value (or absence) of its `X-XSS-Protection` header:
-
-1.  Let |value| be the result of <a lt="parse a header value">parsing</a> "`X-XSS-Protection`" in
-    |response|'s <a for="response">header list</a>.
-
-2.  If |value| is `null`, return `null`.
-
-3.  Let |list| be the result of <a lt="strictly split a string">strictly splitting</a> |value| on
-    U+003B SEMICOLON ("`;`").
-
-4.  Let |result| be "`filter`".
-
-5.  Let |processedFirstItem| be `false`.
-
-6.  While |list| is not empty:
-
-    1.  Let |item| be the result of popping the first item off of |list|.
-
-    2.  <a>Strip leading and trailing whitespace</a> from |item|.
-
-    3.  If |processedFirstItem| is `false`:
-
-        1.  If the first character of |value| is "`0`", return "`ignore`".
-
-        2.  If the first character of |value| is not "`1`", set |result| to "`filter`".
-
-        3.  Set |processedFirstItem| to `true`.
-
-        Otherwise:
-
-        1.  If |value| is "`mode=block`", set |result| to "`block`". 
-
-7.  Return |result|.
-
-ISSUE: Work in progress. This isn't specified anywhere, so I'm eyeballing/simplifying Blink's
-implementation. It might or might not match Edge.
 
 Implementation Considerations {#implementation}
 =============================
@@ -576,7 +440,7 @@ Implementation Considerations {#implementation}
 Error Messages {#error-messages}
 --------------
 
-The <a http-header>`XSS-Protection`</a> mechanism is defined almost entirely in terms of [[CSP]].
+The <a http-header>`ARTUR`</a> mechanism is defined almost entirely in terms of [[CSP]].
 This is intentional, as it means that user agents can easily reuse all the existing machinery
 they've built up for that purpose. It might be confusing for developers, however, especially if,
 in the distant future, CSP becomes an esoteric thing that no one uses on its own. Error messages,
@@ -597,7 +461,6 @@ Acknowledgements {#acks}
 ================
 
 This proposal arose from a conversation in the WebAppSec meetings at TPAC 2016. Thanks to Artur
-Janc for being a good sport about the original name (the lovingly backronymed "Anti-XSS
-Response-Time Uniqueness Requirement"), to Richard Barnes for being appropriately skeptical at the
+Janc for being a good sport about the original name (the lovingly backronymed ""), to Richard Barnes for being appropriately skeptical at the
 value provided, and to Sebastian Lekies and Krzysztof Kotowicz for being CSP gadflies in the most
 honorably Socratic tradition.
