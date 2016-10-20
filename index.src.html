@@ -140,7 +140,7 @@ Each policy has a <dfn for="ARTUR policy">reporting group</dfn> which is a strin
 value is the string "`default`" unless otherwise specified.
 
 Each policy has a <dfn for="ARTUR policy">eval policy</dfn> which is either "`block`" or
-"`unsafe-eval`". Its value is "`block`" unless otherwise specified.
+"`unsafe-eval`". Its value is "`unsafe-eval`" unless otherwise specified.
 
 Algorithms {#algorithms}
 ----------
@@ -229,7 +229,7 @@ boils down to a representation of the following dictionary type:
   };
 
   dictionary ArturPolicy {
-    EvalPolicy eval = "block";
+    EvalPolicy eval = "unsafe-allow";
     sequence&lt;DOMString&gt; hash;
     DOMString nonce;
     DOMString report = "default";
@@ -244,10 +244,11 @@ unknown members when parsing the header.
 The `eval` member {#eval-member}
 -----------------
 
-The <dfn dictionary-member for="ArturPolicy">eval</dfn> member defines the page's policy
-towards `eval()`. By default, the value is "`block`", which causes `eval()` to throw a
-`SecurityError` rather than executing a string as code. It can be set to "`unsafe-allow`" in order
-to allow such conversion.
+The <dfn dictionary-member for="ArturPolicy">eval</dfn> member defines the page's policy towards
+`eval()`. For increased security, developers can set the value to "`block`", which causes `eval()`
+to throw a `SecurityError` rather than executing a string as code. It is set to "`unsafe-allow`"
+by default in order to keep policies simple, as we've seen widespread-enough usage of `eval()` to
+make it hard to deny by fiat.
 
 <div class="example">
   MegaCorp, Inc. has a number of libraries which require `eval()` for various purposes. They can

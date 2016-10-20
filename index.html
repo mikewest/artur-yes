@@ -1549,7 +1549,7 @@ value is the empty set unless otherwise specified.</p>
    <p>Each policy has a <dfn class="dfn-paneled" data-dfn-for="ARTUR policy" data-dfn-type="dfn" data-noexport="" id="artur-policy-reporting-group">reporting group</dfn> which is a string. Its
 value is the string "<code>default</code>" unless otherwise specified.</p>
    <p>Each policy has a <dfn class="dfn-paneled" data-dfn-for="ARTUR policy" data-dfn-type="dfn" data-noexport="" id="artur-policy-eval-policy">eval policy</dfn> which is either "<code>block</code>" or
-"<code>unsafe-eval</code>". Its value is "<code>block</code>" unless otherwise specified.</p>
+"<code>unsafe-eval</code>". Its value is "<code>unsafe-eval</code>" unless otherwise specified.</p>
    <h3 class="heading settled" data-level="2.2" id="algorithms"><span class="secno">2.2. </span><span class="content">Algorithms</span><a class="self-link" href="#algorithms"></a></h3>
    <h4 class="heading settled algorithm" data-algorithm="Obtain a set of ARTUR policies for response." data-level="2.2.1" id="policy-for-response"><span class="secno">2.2.1. </span><span class="content"> Obtain a set of ARTUR policies for <var>response</var>. </span><a class="self-link" href="#policy-for-response"></a></h4>
    <p>Given a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response">response</a> (<var>response</var>), this algorithm returns a sequence of <a data-link-type="dfn" href="#artur-policy" id="ref-for-artur-policy-1">ARTUR policy</a> objects. If no valid policy is found for <var>response</var>, the returned sequence will be empty.</p>
@@ -1611,7 +1611,7 @@ boils down to a representation of the following dictionary type:</p>
 };
 
 <span class="kt">dictionary</span> <dfn class="nv idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-arturpolicy">ArturPolicy<a class="self-link" href="#dictdef-arturpolicy"></a></dfn> {
-  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy" id="ref-for-enumdef-evalpolicy-2">EvalPolicy</a> <dfn class="nv dfn-paneled idl-code" data-default="&quot;block&quot;" data-dfn-for="ArturPolicy" data-dfn-type="dict-member" data-export="" data-type="EvalPolicy " id="dom-arturpolicy-eval">eval</dfn> = "block";
+  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy" id="ref-for-enumdef-evalpolicy-2">EvalPolicy</a> <dfn class="nv dfn-paneled idl-code" data-default="&quot;unsafe-allow&quot;" data-dfn-for="ArturPolicy" data-dfn-type="dict-member" data-export="" data-type="EvalPolicy " id="dom-arturpolicy-eval">eval</dfn> = "unsafe-allow";
   <span class="kt">sequence</span>&lt;<span class="kt">DOMString</span>> <dfn class="nv dfn-paneled idl-code" data-dfn-for="ArturPolicy" data-dfn-type="dict-member" data-export="" data-type="sequence<DOMString> " id="dom-arturpolicy-hash">hash</dfn>;
   <span class="kt">DOMString</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="ArturPolicy" data-dfn-type="dict-member" data-export="" data-type="DOMString " id="dom-arturpolicy-nonce">nonce</dfn>;
   <span class="kt">DOMString</span> <dfn class="nv dfn-paneled idl-code" data-default="&quot;default&quot;" data-dfn-for="ArturPolicy" data-dfn-type="dict-member" data-export="" data-type="DOMString " id="dom-arturpolicy-report">report</dfn> = "default";
@@ -1622,9 +1622,9 @@ boils down to a representation of the following dictionary type:</p>
 defines. Future versions of this document may define additional members; user agents MUST ignore
 unknown members when parsing the header.</p>
    <h3 class="heading settled" data-level="3.1" id="eval-member"><span class="secno">3.1. </span><span class="content">The <code>eval</code> member</span><a class="self-link" href="#eval-member"></a></h3>
-   <p>The <dfn class="dfn-paneled" data-dfn-for="ArturPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="arturpolicy-eval">eval</dfn> member defines the page’s policy
-towards <code>eval()</code>. By default, the value is "<code>block</code>", which causes <code>eval()</code> to throw a <code>SecurityError</code> rather than executing a string as code. It can be set to "<code>unsafe-allow</code>" in order
-to allow such conversion.</p>
+   <p>The <dfn class="dfn-paneled" data-dfn-for="ArturPolicy" data-dfn-type="dfn" data-noexport="" dictionary-member="" id="arturpolicy-eval">eval</dfn> member defines the page’s policy towards <code>eval()</code>. For increased security, developers can set the value to "<code>block</code>", which causes <code>eval()</code> to throw a <code>SecurityError</code> rather than executing a string as code. It is set to "<code>unsafe-allow</code>"
+by default in order to keep policies simple, as we’ve seen widespread-enough usage of <code>eval()</code> to
+make it hard to deny by fiat.</p>
    <div class="example" id="example-ebb6c0d5">
     <a class="self-link" href="#example-ebb6c0d5"></a> MegaCorp, Inc. has a number of libraries which require <code>eval()</code> for various purposes. They can
   allow such execution by sending an appropriate <code class="idl"><a data-link-type="idl" href="#dom-arturpolicy-eval" id="ref-for-dom-arturpolicy-eval-2">eval</a></code> member along with
@@ -2069,7 +2069,7 @@ honorably Socratic tradition.</p>
 };
 
 <span class="kt">dictionary</span> <a class="nv" href="#dictdef-arturpolicy">ArturPolicy</a> {
-  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy">EvalPolicy</a> <a class="nv" data-default="&quot;block&quot;" data-type="EvalPolicy " href="#dom-arturpolicy-eval">eval</a> = "block";
+  <a class="n" data-link-type="idl-name" href="#enumdef-evalpolicy">EvalPolicy</a> <a class="nv" data-default="&quot;unsafe-allow&quot;" data-type="EvalPolicy " href="#dom-arturpolicy-eval">eval</a> = "unsafe-allow";
   <span class="kt">sequence</span>&lt;<span class="kt">DOMString</span>> <a class="nv" data-type="sequence<DOMString> " href="#dom-arturpolicy-hash">hash</a>;
   <span class="kt">DOMString</span> <a class="nv" data-type="DOMString " href="#dom-arturpolicy-nonce">nonce</a>;
   <span class="kt">DOMString</span> <a class="nv" data-default="&quot;default&quot;" data-type="DOMString " href="#dom-arturpolicy-report">report</a> = "default";
